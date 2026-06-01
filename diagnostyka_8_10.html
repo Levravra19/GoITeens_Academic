@@ -7,17 +7,18 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --y:#FFD12E;--yl:#FFF9D6;--navy:#0F1B35;--navy2:#1E3158;--blue:#2355D8;
-  --tx:#111827;--muted:#6B7280;--bg:#fff;--surf:#F5F6FA;--surf2:#ECEEF6;
-  --brd:#E2E5EE;--ok:#10B981;--err:#EF4444;--warn:#F59E0B;
-  --r:14px;--rl:20px;--sh:0 2px 12px rgba(15,27,53,.08);--shm:0 6px 24px rgba(15,27,53,.13);
+  --y:#FEC830;--yl:#FFF5D0;--navy:#2E43A4;--navy2:#1D2E7A;--blue:#479FDE;
+  --tx:#1A1A1A;--muted:#6E6E6E;--bg:#fff;--surf:#F5F5F5;--surf2:#EDEDED;
+  --brd:#E0E0E0;--ok:#97CB43;--err:#E05744;--warn:#E58845;
+  --r:12px;--rl:18px;--sh:0 2px 12px rgba(46,67,164,.08);--shm:0 6px 24px rgba(46,67,164,.13);
   --tr:.22s cubic-bezier(.4,0,.2,1)
 }
-html{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:16px}
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap');
+html{font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;font-size:16px}
 body{background:var(--bg);color:var(--tx);min-height:100vh}
 
 /* TOPBAR */
-.bar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1.5px solid var(--brd);height:58px;display:flex;align-items:center;padding:0 20px;gap:14px}
+.bar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:2px solid var(--brd);height:60px;display:flex;align-items:center;padding:0 24px;gap:14px}
 .logo{display:flex;align-items:center;font-weight:800;font-size:21px;letter-spacing:-.5px;color:var(--navy);white-space:nowrap}
 .logo-go{background:var(--y);padding:2px 6px;border-radius:6px;margin-right:1px}
 .pb-wrap{flex:1;max-width:360px}
@@ -34,18 +35,18 @@ body{background:var(--bg);color:var(--tx);min-height:100vh}
 @keyframes fs{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
 /* TYPE */
-h1{font-size:26px;font-weight:800;color:var(--navy);line-height:1.2;margin-bottom:8px}
-h2{font-size:21px;font-weight:700;color:var(--navy);margin-bottom:6px}
+h1{font-size:26px;font-weight:700;color:var(--navy);line-height:1.2;margin-bottom:8px;letter-spacing:-.3px}
+h2{font-size:21px;font-weight:700;color:var(--navy);margin-bottom:8px;letter-spacing:-.2px}
 h3{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px}
 p{line-height:1.65}
-.tag{display:inline-block;background:var(--yl);color:var(--navy);font-size:11px;font-weight:800;border-radius:6px;padding:3px 9px;margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase}
+.tag{display:inline-block;background:var(--yl);color:var(--navy);font-size:11px;font-weight:700;border-radius:4px;padding:4px 10px;margin-bottom:8px;letter-spacing:.8px;text-transform:uppercase;font-family:'IBM Plex Mono','Courier New',monospace}
 .muted{color:var(--muted);font-size:14px}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:var(--tr)}
 .btn-p{background:var(--y);color:var(--navy)}
-.btn-p:hover{background:#F0C400;transform:translateY(-1px);box-shadow:var(--sh)}
-.btn-s{background:var(--surf);color:var(--navy);border:1.5px solid var(--brd)}
+.btn-p:hover{background:#e0ab00;transform:translateY(-1px);box-shadow:var(--sh)}
+.btn-s{background:var(--surf);color:var(--navy);border:2px solid var(--brd)}
 .btn-s:hover{background:var(--surf2)}
 .btn-o{background:transparent;color:var(--navy);border:2px solid var(--navy)}
 .btn-o:hover{background:var(--navy);color:#fff}
@@ -87,14 +88,15 @@ p{line-height:1.65}
 
 /* HERO */
 .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);border-radius:var(--rl);padding:36px 32px;color:#fff;margin-bottom:26px;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;right:-50px;top:-50px;width:220px;height:220px;background:var(--y);opacity:.07;border-radius:50%}
+.hero::before{content:'';position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;border:18px solid var(--y);border-radius:50%;opacity:.18}
+.hero::after{content:'';position:absolute;right:60px;top:-20px;width:60px;height:60px;background:var(--y);opacity:.13;transform:rotate(45deg)}
 .hero h1{color:#fff;font-size:28px}
 .hero p{color:rgba(255,255,255,.82);font-size:16px;line-height:1.65;margin-top:9px}
 
 /* FEEDBACK */
 .fb{border-radius:9px;padding:12px 16px;font-size:14px;font-weight:600;margin-top:14px;display:none;align-items:center;gap:9px}
 .fb.on{display:flex}
-.fb.ok{background:#D1FAE5;color:#065F46;border-left:4px solid var(--ok)}
+.fb.ok{background:#e3f5c5;color:#435C1A;border-left:4px solid var(--ok)}
 .fb.err{background:#FEE2E2;color:#991B1B;border-left:4px solid var(--err)}
 .fb.warn{background:#FEF3C7;color:#92400E;border-left:4px solid var(--warn)}
 
@@ -109,7 +111,7 @@ p{line-height:1.65}
 .cell.wall{background:#374151;border-color:#374151}
 .cell.path{background:#EFF6FF;border-color:#BFDBFE}
 .cell.anim{background:var(--yl);border-color:var(--y);animation:cp .45s ease}
-.cell.done{background:#D1FAE5;border-color:var(--ok);animation:cp .35s ease}
+.cell.done{background:#e3f5c5;border-color:var(--ok);animation:cp .35s ease}
 .cell.fail{background:#FEE2E2;border-color:var(--err)}
 @keyframes cp{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
 .cmds{min-height:44px;background:var(--surf);border:2px solid var(--brd);border-radius:9px;padding:9px 13px;font-size:20px;letter-spacing:3px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:12px 0;color:var(--navy)}
@@ -138,8 +140,8 @@ p{line-height:1.65}
 .b-algo{background:#2355D8}.b-spat{background:#7C3AED}.b-vis{background:#E8770A}.b-crea{background:#10B981}.b-it{background:var(--navy)}.b-art{background:#E8770A}
 .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
 .score-card{border-radius:var(--r);padding:18px;border:2px solid var(--brd)}
-.score-card.it{border-color:var(--navy);background:#EEF2FF}
-.score-card.art{border-color:var(--warn);background:#FFFBEB}
+.score-card.it{border-color:var(--navy);background:#E6EAFA}
+.score-card.art{border-color:var(--warn);background:#FAEEE6}
 .score-num{font-size:34px;font-weight:800}
 .score-card.it .score-num{color:var(--navy)}
 .score-card.art .score-num{color:#92400E}
@@ -163,7 +165,7 @@ p{line-height:1.65}
 
 /* LEVEL badge */
 .lvl{display:inline-block;border-radius:8px;padding:4px 12px;font-size:12px;font-weight:700;margin-bottom:6px}
-.lvl.l1{background:#D1FAE5;color:#065F46}.lvl.l2{background:#FEF3C7;color:#92400E}
+.lvl.l1{background:#e3f5c5;color:#435C1A}.lvl.l2{background:#FFF5D0;color:#B25919}
 
 /* TASK 2 program */
 .prog-seq{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
@@ -190,6 +192,7 @@ p{line-height:1.65}
 .mc.bridge{background:#FDE68A;border:2px solid var(--warn);cursor:pointer;font-size:12px;font-weight:700;transition:var(--tr)}
 .mc.bridge:hover{background:var(--y);border-color:var(--y)}
 .mc.bridge.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+.mc.monster{background:#FEE2E2;border:2px solid var(--err);font-size:20px}
 .mc.path-anim{background:var(--yl);border:2px solid var(--y)}
 
 /* MULTI SELECT info */
@@ -228,7 +231,7 @@ hr.dv{border:none;border-top:2px solid var(--brd);margin:24px 0}
 
 <!-- TOPBAR -->
 <div class="bar">
-  <div class="logo"><span class="logo-go">GO!</span><span>TEENS</span></div>
+  <div class="logo"><span style="background:#FEC830;padding:3px 8px;border-radius:5px;font-weight:900;font-size:19px;letter-spacing:-1px;margin-right:0;font-family:'IBM Plex Mono','Courier New',monospace">GO/</span><span style="font-weight:900;font-size:19px;letter-spacing:-0.5px;font-family:'IBM Plex Mono','Courier New',monospace">TEENS</span></div>
   <div class="pb-wrap">
     <div class="pb-lbl" id="pbLabel">Початок</div>
     <div class="pb-track"><div class="pb-fill" id="pbFill" style="width:0%"></div></div>
@@ -241,6 +244,7 @@ hr.dv{border:none;border-top:2px solid var(--brd);margin:24px 0}
 <!-- ===== S0: START ===== -->
 <div class="screen active" id="s0">
   <div class="hero">
+    <svg style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:.1" viewBox="0 0 600 160" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><circle cx="550" cy="25" r="38" fill="#FEC830"/><rect x="500" y="100" width="28" height="28" fill="#FEC830" transform="rotate(25,514,114)"/><circle cx="520" cy="140" r="16" fill="none" stroke="#FEC830" stroke-width="5"/><line x1="480" y1="8" x2="520" y2="48" stroke="#FEC830" stroke-width="4"/></svg>
     <div class="tag">GoITeens · Діагностика</div>
     <h1>Діагностика digital-схильностей</h1>
     <p>Коротка інтерактивна подорож, яка допоможе зрозуміти, які digital-завдання подобаються тобі найбільше.</p>
@@ -314,9 +318,6 @@ hr.dv{border:none;border-top:2px solid var(--brd);margin:24px 0}
       </div>
     </div>
     <div class="fb" id="fb-t1l1"></div>
-    <div id="t1-lv1-next" style="display:none;margin-top:16px">
-      <button class="btn btn-p btn-sm" onclick="go(3)">Перейти до складнішого рівня →</button>
-    </div>
   </div>
 
   <div class="brow sp" style="margin-top:20px">
@@ -445,12 +446,13 @@ hr.dv{border:none;border-top:2px solid var(--brd);margin:24px 0}
 <!-- ===== S5: TASK 4 — SHORTEST PATH ===== -->
 <div class="screen" id="s6">
   <div class="tag">Завдання 4 · Просторове мислення</div>
-  <h2>Допоможи герою швидше дістатися до скрині 🗺️</h2>
-  <p class="muted" style="margin-bottom:16px">Герой стоїть на одному березі, а скриня — на іншому. Обери міст, через який шлях буде найкоротшим.</p>
+  <h2>Допоможи герою дістатися до скрині 🗺️</h2>
+  <p class="muted" style="margin-bottom:6px">Герой 🧙 стоїть на лівому березі, скриня 📦 — на правому. Посередині річка — перейти можна тільки через один із трьох мостів.</p>
+  <p class="muted" style="margin-bottom:14px">Але обережно — на деяких шляхах є монстри 👾! Обери міст, через який шлях до скрині буде <strong>найкоротшим і безпечним</strong>.</p>
   <div style="overflow-x:auto;display:flex;justify-content:center;margin-bottom:16px">
     <div class="map7" id="map7"></div>
   </div>
-  <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px">Натисни на міст, щоб обрати</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:12px"><span>🧙 Герой</span><span>📦 Скриня</span><span>🌊 Річка</span><span>👾 Монстр (заблоковано)</span><span>Міст А/Б/В — натисни щоб обрати</span></div>
   <div class="fb" id="fb-t4"></div>
   <div id="t4-skip-confirm" class="skip-confirm">
     <p style="font-weight:700;margin-bottom:10px">Точно перейти далі без відповіді?</p>
@@ -484,6 +486,20 @@ hr.dv{border:none;border-top:2px solid var(--brd);margin:24px 0}
     </div>
   </div>
   <div class="fb" id="fb-t5"></div>
+  <div id="rot-anim-wrap" style="display:none;margin-top:18px;padding:16px;background:var(--surf);border-radius:12px;border:1.5px solid var(--brd)">
+    <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px">🔄 Анімація повороту на 90°:</p>
+    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:6px">Оригінал</p>
+        <div id="rot-anim-orig"></div>
+      </div>
+      <div style="font-size:28px">→</div>
+      <div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:6px">Після повороту</p>
+        <div id="rot-anim-shape" style="display:inline-block"></div>
+      </div>
+    </div>
+  </div>
   <div id="t5-skip-confirm" class="skip-confirm">
     <p style="font-weight:700;margin-bottom:10px">Точно перейти далі без відповіді?</p>
     <div style="display:flex;gap:8px">
@@ -714,7 +730,6 @@ hr.dv{border:none;border-top:2px solid var(--brd);margin:24px 0}
       <label class="chk-card" onclick="toggleFQ1('spatial')"><div class="chkb" id="fq1-spatial"></div>🌍 Працювати з блоками та ігровим світом</label>
       <label class="chk-card" onclick="toggleFQ1('visual')"><div class="chkb" id="fq1-visual"></div>🎨 Обирати кольори й оформлення</label>
       <label class="chk-card" onclick="toggleFQ1('creative')"><div class="chkb" id="fq1-creative"></div>💡 Знаходити незвичайні рішення</label>
-      <label class="chk-card" onclick="toggleFQ1('all')"><div class="chkb" id="fq1-all"></div>✨ Сподобалося декілька різних завдань</label>
     </div>
   </div>
 
@@ -772,7 +787,6 @@ hr.dv{border:none;border-top:2px solid var(--brd);margin:24px 0}
   <div id="roblox-note" style="display:none" class="note"></div>
   <div id="minecraft-note" style="display:none" class="note"></div>
 
-  <div class="notice">⚠️ <strong>Важливо:</strong> Результат є орієнтиром за підсумками короткої інтерактивної діагностики. Остаточну рекомендацію варто узгодити з методистом з урахуванням інтересів дитини та попереднього досвіду.</div>
 
   <div class="brow no-print" style="flex-wrap:wrap;gap:9px;margin-top:22px">
     <button class="btn btn-p" onclick="window.print()">🖨️ Роздрукувати результат</button>
@@ -883,7 +897,7 @@ function go(n){
   window.scrollTo(0,0);
   const pct=Math.round(n/(TOTAL-1)*100);
   document.getElementById('pbFill').style.width=pct+'%';
-  document.getElementById('pbLabel').textContent=SCREEN_NAMES[n]||'';
+  document.getElementById('pbLbl').textContent=SCREEN_NAMES[n]||'';
 }
 
 /* ============================================================
@@ -990,7 +1004,7 @@ async function runGrid4(){
         st.locked.t1l1=true;
       }
       st.t1l1_done=true;
-      document.getElementById('t1-lv1-next').style.display='block';
+      setTimeout(()=>go(3),1500);
       st.running4=false; return;
     }
   }
@@ -1138,40 +1152,54 @@ async function applyFix(errIdx,newCmd){
 }
 
 async function showBugAnim(){
+  if(st._bugRunning)return;
+  st._bugRunning=true;
   const btn=document.getElementById('btn-show-bug');
   if(btn)btn.disabled=true;
   buildGridT2();
   document.getElementById('t2-hint').style.display='none';
+  hideFB('fb-t2');
   let pos=[...G2_ROBOT];
   const walls=G2_WALLS; const batt=G2_BATT;
   for(let i=0;i<PROG_SEQ.length;i++){
-    const cmd=PROG_SEQ[i];
+    // highlight current command
     document.querySelectorAll('.prog-cmd').forEach((el,j)=>el.classList.toggle('running',j===i));
     const [pr,pc]=pos;
-    setCellState('grid-t2',pr,pc,'','');
-    if(walls.some(w=>w[0]===pr&&w[1]===pc)) setCellState('grid-t2',pr,pc,'wall','🧱');
-    else if(batt[0]===pr&&batt[1]===pc) setCellState('grid-t2',pr,pc,'','🔋');
+    // clear robot from current cell, restore it
+    if(walls.some(w=>w[0]===pr&&w[1]===pc)){setCellState('grid-t2',pr,pc,'wall','🧱');}
+    else if(batt[0]===pr&&batt[1]===pc){setCellState('grid-t2',pr,pc,'','🔋');}
+    else{setCellState('grid-t2',pr,pc,'','');}
+    const cmd=PROG_SEQ[i];
     let nr=pr,nc=pc;
     if(cmd==='U')nr--;else if(cmd==='D')nr++;else if(cmd==='L')nc--;else nc++;
+    // boundary check
     if(nr<1||nr>4||nc<1||nc>4){
       setCellState('grid-t2',pr,pc,'fail','🤖');
       document.querySelectorAll('.prog-cmd').forEach((el,j)=>el.classList.toggle('sel-err',j===i));
-      document.getElementById('t2-hint').style.display='block';
-      return;
+      showFB('fb-t2','err','💥 Команда №'+(i+1)+' виводить робота за межі поля! Знайди її та натисни на неї.');
+      st._bugRunning=false; return;
     }
+    // wall check
     if(walls.some(w=>w[0]===nr&&w[1]===nc)){
       setCellState('grid-t2',pr,pc,'fail','🤖');
       setCellState('grid-t2',nr,nc,'fail','💥');
       document.querySelectorAll('.prog-cmd').forEach((el,j)=>el.classList.toggle('sel-err',j===i));
+      showFB('fb-t2','err','💥 Ось де помилка! Команда №'+(i+1)+' веде прямо на перешкоду. Натисни на неї в програмі.');
       document.getElementById('t2-hint').style.display='block';
-      return;
+      st._bugRunning=false; return;
     }
     pos=[nr,nc];
+    if(nr===batt[0]&&nc===batt[1]){
+      setCellState('grid-t2',nr,nc,'done','🔋');
+      document.querySelectorAll('.prog-cmd').forEach(el=>{el.classList.remove('running');el.classList.remove('sel-err');});
+      showFB('fb-t2','warn','Програма пройшла без помилки. Якщо робот не дістався — перевір логіку маршруту.');
+      st._bugRunning=false; return;
+    }
     setCellState('grid-t2',nr,nc,'anim','🤖');
-    await sleep(420);
-    if(nr===batt[0]&&nc===batt[1]) break;
+    await sleep(450);
   }
   document.querySelectorAll('.prog-cmd').forEach(el=>el.classList.remove('running'));
+  st._bugRunning=false;
 }
 
 async function runFixedProg(){
@@ -1266,27 +1294,35 @@ function checkShape(opt,el){
 function buildMap7(){
   const map=document.getElementById('map7');
   map.innerHTML='';
+  // 7x7 grid: river col=4, hero[4,1], chest[2,7]
+  // bridges: A[2,4], B[4,4], C[6,4]
+  // monsters at [4,6] and [6,6] blocking direct paths from B and C
+  const HERO=[4,1],CHEST=[2,7],RIVER=4;
+  const BRIDGE_A=[2,4],BRIDGE_B=[4,4],BRIDGE_C=[6,4];
+  const MONSTERS=[[4,6],[6,6]];
+  // update globals for pickBridge
+  window._MAP={HERO,CHEST,RIVER,BRIDGE_A,BRIDGE_B,BRIDGE_C,MONSTERS};
   for(let r=1;r<=7;r++) for(let c=1;c<=7;c++){
     const d=document.createElement('div');
     d.className='mc';
     d.id='mc-'+r+'-'+c;
-    const isRiver=c===MAP_RIVER_COL;
-    const isBridgeA=r===MAP_BRIDGES.A[0]&&c===MAP_BRIDGES.A[1];
-    const isBridgeB=r===MAP_BRIDGES.B[0]&&c===MAP_BRIDGES.B[1];
-    const isBridgeC=r===MAP_BRIDGES.C[0]&&c===MAP_BRIDGES.C[1];
-    if(isBridgeA||isBridgeB||isBridgeC){
+    const isRiver=c===RIVER;
+    const isBA=r===BRIDGE_A[0]&&c===BRIDGE_A[1];
+    const isBB=r===BRIDGE_B[0]&&c===BRIDGE_B[1];
+    const isBC=r===BRIDGE_C[0]&&c===BRIDGE_C[1];
+    const isMon=MONSTERS.some(m=>m[0]===r&&m[1]===c);
+    if(isBA||isBB||isBC){
       d.classList.add('bridge');
-      const lbl=isBridgeA?'Міст А':isBridgeB?'Міст Б':'Міст В';
-      d.textContent=lbl;
-      d.onclick=()=>pickBridge(isBridgeA?'A':isBridgeB?'B':'C');
-    } else if(r===MAP_HERO[0]&&c===MAP_HERO[1]){
+      d.innerHTML=(isBA?'Міст<br>А':isBB?'Міст<br>Б':'Міст<br>В');
+      d.onclick=()=>pickBridge(isBA?'A':isBB?'B':'C');
+    } else if(r===HERO[0]&&c===HERO[1]){
       d.classList.add('land'); d.textContent='🧙';
-    } else if(r===MAP_CHEST[0]&&c===MAP_CHEST[1]){
+    } else if(r===CHEST[0]&&c===CHEST[1]){
       d.classList.add('land'); d.textContent='📦';
+    } else if(isMon){
+      d.classList.add('monster'); d.textContent='👾';
     } else if(isRiver){
       d.classList.add('river'); d.textContent='🌊';
-    } else if(c<MAP_RIVER_COL){
-      d.classList.add('land');
     } else {
       d.classList.add('land');
     }
@@ -1298,46 +1334,56 @@ async function pickBridge(choice){
   if(st.locked.t4)return;
   st.attempts.t4++;
   st.t4_sel=choice;
-  // highlight bridge
-  ['A','B','C'].forEach(b=>{
-    const [br,bc]=MAP_BRIDGES[b];
+  const M=window._MAP||{BRIDGE_A:[2,4],BRIDGE_B:[4,4],BRIDGE_C:[6,4]};
+  // highlight selected
+  const bridgePos={A:M.BRIDGE_A,B:M.BRIDGE_B,C:M.BRIDGE_C};
+  Object.entries(bridgePos).forEach(([b,[br,bc]])=>{
     const el=document.getElementById('mc-'+br+'-'+bc);
-    el.classList.toggle('sel',b===choice);
+    if(el)el.classList.toggle('sel',b===choice);
   });
-  const correct=choice==='B';
+  // correct = Bridge A: cross at row2, chest is also at row2 = shortest path
+  const correct=choice==='A';
   if(correct){
-    showFB('fb-t4','ok','✅ Правильно! Міст Б — найкоротший шлях: герой і скриня на одному рядку.');
+    showFB('fb-t4','ok','✅ Правильно! Міст А найближчий до скрині — через нього шлях найкоротший. Міст Б заблокований монстром 👾, Міст В занадто далеко.');
     if(!st.locked.t4){const a=st.attempts.t4;st.results.spatial_2=a===1?3:a===2?2:1;st.locked.t4=true;}
-    await animatePath7(choice);
+    await animatePath7('A');
+  } else if(choice==='B'){
+    showFB('fb-t4','err','👾 Обережно! Шлях через Міст Б заблокований монстром на клітинці 5,6. Спробуй інший міст!');
   } else {
-    showFB('fb-t4','err','🤔 Спробуй ще раз. Де шлях від героя до скрині буде найкоротшим?');
+    showFB('fb-t4','err','🤔 Занадто довго! Через Міст В доведеться пройти багато зайвих кроків. Де скриня знаходиться ближче?');
   }
 }
 
 async function animatePath7(bridge){
-  // Simple path highlight: hero row -> bridge row -> cross -> chest row
-  const heroR=MAP_HERO[0], chestR=MAP_CHEST[0];
-  const br=MAP_BRIDGES[bridge][0];
-  // walk left bank to bridge row
-  if(heroR!==br){
-    const dir=heroR<br?1:-1;
-    for(let r=heroR+dir;r!==br+dir;r+=dir){
-      const el=document.getElementById('mc-'+r+'-1');
-      if(el)el.classList.add('path-anim');
-      await sleep(200);
-    }
+  const M=window._MAP||{};
+  const HERO=M.HERO||[4,1], CHEST=M.CHEST||[2,7];
+  const bridgePos={A:M.BRIDGE_A||[2,4],B:M.BRIDGE_B||[4,4],C:M.BRIDGE_C||[6,4]};
+  const [br,bc]=bridgePos[bridge];
+  const heroR=HERO[0], chestR=CHEST[0], chestC=CHEST[1];
+  // walk left bank hero row -> bridge row (col 1)
+  const dir1=heroR<=br?1:-1;
+  for(let r=heroR;r!==br+dir1;r+=dir1){
+    const el=document.getElementById('mc-'+r+'-1');
+    if(el)el.classList.add('path-anim');
+    await sleep(180);
   }
   // cross bridge
-  const bEl=document.getElementById('mc-'+br+'-'+MAP_RIVER_COL);
-  if(bEl)bEl.style.background='#6EE7B7';
-  await sleep(300);
-  // walk right bank to chest row
+  const bEl=document.getElementById('mc-'+br+'-'+bc);
+  if(bEl){bEl.style.background='#6EE7B7';bEl.style.color='#fff';}
+  await sleep(280);
+  // walk right bank: from bridge row to chest row (col 5+1..chestC)
+  for(let c=bc+1;c<=chestC;c++){
+    const el=document.getElementById('mc-'+br+'-'+c);
+    if(el)el.classList.add('path-anim');
+    await sleep(180);
+  }
+  // if bridge row !== chest row, walk up/down to chest
   if(br!==chestR){
-    const dir=br<chestR?1:-1;
-    for(let r=br+dir;r!==chestR+dir;r+=dir){
-      const el=document.getElementById('mc-'+r+'-7');
+    const dir2=chestR<br?-1:1;
+    for(let r=br+dir2;r!==chestR+dir2;r+=dir2){
+      const el=document.getElementById('mc-'+r+'-'+chestC);
       if(el)el.classList.add('path-anim');
-      await sleep(200);
+      await sleep(180);
     }
   }
 }
@@ -1370,17 +1416,51 @@ function buildRotation(){
 
 function checkRot(opt,el){
   if(st.locked.t5)return;
-  if(!st.locked.t5) st.attempts.t5++;
+  st.attempts.t5++;
   st.t5_sel=opt.label;
   document.querySelectorAll('#rot-opts .cc').forEach(c=>c.classList.remove('sel','ok','bad'));
   if(opt.correct){
     el.classList.add('ok');
-    showFB('fb-t5','ok','✅ Правильно! Це та сама фігура, повернута на 90 градусів.');
+    showFB('fb-t5','ok','✅ Правильно! Варіант Б — це та сама фігура, повернута на 90°. Поглянь на анімацію нижче 👇');
     if(!st.locked.t5){const a=st.attempts.t5;st.results.spatial_3=a===1?3:a===2?2:1;st.locked.t5=true;}
+    animateRotation();
   } else {
     el.classList.add('bad');
-    showFB('fb-t5','err','🤔 Не зовсім. Поглянь уважніше на форму та поворот.');
+    showFB('fb-t5','err','🤔 Не зовсім. Уяви, що тримаєш фігуру і повертаєш її на чверть оберту. Яка з інших схожа на результат?');
   }
+}
+
+function animateRotation(){
+  // Show a step-by-step rotation animation between orig and rotated shape
+  const wrap=document.getElementById('rot-anim-wrap');
+  if(!wrap)return;
+  wrap.style.display='block';
+  const stages=[ROT_ORIG,ROT_OPTS[1].grid];
+  let step=0;
+  const origEl=document.getElementById('rot-anim-orig');
+  if(origEl)origEl.innerHTML=shapeHTML(ROT_ORIG,38);
+  const el=document.getElementById('rot-anim-shape');
+  if(!el)return;
+  el.innerHTML=shapeHTML(stages[0],38);
+  el.style.transition='transform 0.6s ease';
+  el.style.transformOrigin='center center';
+  // animate rotation
+  let angle=0;
+  const tick=()=>{
+    if(step===0){
+      el.style.transform='rotate(45deg) scale(0.85)';
+      step=1;
+      setTimeout(()=>{
+        el.innerHTML=shapeHTML(stages[1],38);
+        el.style.transform='rotate(90deg) scale(1)';
+        step=2;
+      },600);
+      setTimeout(()=>{
+        el.style.transform='rotate(0deg) scale(1)';
+      },1200);
+    }
+  };
+  setTimeout(tick,200);
 }
 
 /* ============================================================
@@ -1626,19 +1706,12 @@ function checkLevel(){
    FINAL QUESTIONS
    ============================================================ */
 function toggleFQ1(val){
-  if(val==='all'){
-    // clear others, toggle all
-    if(st.fq1.includes('all')){st.fq1=[];}
-    else{st.fq1=['all'];}
-  } else {
-    const idx=st.fq1.indexOf('all');
-    if(idx>-1)st.fq1.splice(idx,1);
-    const i=st.fq1.indexOf(val);
-    if(i>-1)st.fq1.splice(i,1);
-    else{if(st.fq1.length>=2)return;st.fq1.push(val);}
-  }
-  ['algo','spatial','visual','creative','all'].forEach(k=>{
+  const i=st.fq1.indexOf(val);
+  if(i>-1)st.fq1.splice(i,1);
+  else{if(st.fq1.length>=2)return;st.fq1.push(val);}
+  ['algo','spatial','visual','creative'].forEach(k=>{
     const el=document.getElementById('fq1-'+k);
+    if(!el)return;
     const has=st.fq1.includes(k);
     el.parentElement.classList.toggle('chk',has);
     el.textContent=has?'✓':'';
