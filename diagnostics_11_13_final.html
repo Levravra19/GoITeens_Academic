@@ -1,0 +1,2303 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GoITeens — Діагностика 11–13 років</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --y:#FEC830;--yl:#FFF9E0;--navy:#1C3BA4;--navy2:#111E6C;--aqua:#3A9FDE;
+  --tx:#141414;--muted:#666;--bg:#fff;--surf:#F6F6F8;--surf2:#EBEBEE;
+  --brd:#DCDCE4;--ok:#6BAA28;--err:#D94F3D;--warn:#D4881A;--lilac:#6B3FD4;
+  --teal:#1FA8A0;--r:12px;--rl:18px;
+  --sh:0 2px 18px rgba(28,59,164,.09);--shm:0 6px 32px rgba(28,59,164,.16);
+  --tr:.2s cubic-bezier(.4,0,.2,1)
+}
+html{font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:16px}
+body{background:var(--bg);color:var(--tx);min-height:100vh}
+
+/* ── TOPBAR ── */
+.bar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:2px solid var(--brd);height:62px;display:flex;align-items:center;padding:0 24px;gap:16px}
+.logo-text{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:var(--navy);letter-spacing:-.5px}
+.logo-text span{color:var(--y)}
+.pb-wrap{flex:1;max-width:400px}
+.pb-lbl{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px;font-family:'IBM Plex Mono',monospace;letter-spacing:.4px}
+.pb-track{height:5px;background:var(--surf2);border-radius:99px;overflow:hidden}
+.pb-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--aqua));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.bar-restart{background:none;border:1.5px solid var(--brd);border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:var(--tr)}
+.bar-restart:hover{border-color:var(--navy);color:var(--navy)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:800px;margin:0 auto;padding:28px 20px 100px}
+.screen{display:none;animation:fadeIn .22s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TYPE ── */
+h1{font-size:30px;font-weight:700;color:var(--navy);line-height:1.2;margin-bottom:10px;letter-spacing:-.5px}
+h2{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:10px;letter-spacing:-.3px}
+h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+p{line-height:1.7}
+.tag{display:inline-block;background:rgba(28,59,164,.1);color:var(--navy);font-size:10px;font-weight:700;border-radius:4px;padding:4px 10px;margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.muted{color:var(--muted);font-size:14px;line-height:1.65}
+.lvl{display:inline-block;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;margin-bottom:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:.3px}
+.lvl.l1{background:#d4f5e2;color:#1a5c36}
+.lvl.l2{background:#FFF5D0;color:#8a4a00}
+.lvl.l3{background:#F0E8FF;color:#4a1d96}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:var(--tr);white-space:nowrap}
+.btn-p{background:var(--y);color:var(--navy)}
+.btn-p:hover{background:#e6b400;transform:translateY(-1px);box-shadow:var(--sh)}
+.btn-s{background:var(--surf);color:var(--navy);border:2px solid var(--brd)}
+.btn-s:hover{background:var(--surf2)}
+.btn-o{background:transparent;color:var(--navy);border:2px solid var(--navy)}
+.btn-o:hover{background:var(--navy);color:#fff}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+.btn-sm{padding:9px 18px;font-size:13px}
+.brow{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.brow-sp{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:22px}
+
+/* ── FORMS ── */
+.fg{margin-bottom:18px}
+.fl{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.fi{width:100%;padding:11px 15px;border:2px solid var(--brd);border-radius:10px;font-size:15px;font-family:inherit;color:var(--tx);background:var(--bg);outline:none;transition:var(--tr)}
+.fi:focus{border-color:var(--y)}
+.ferr{font-size:12px;color:var(--err);margin-top:4px;display:none}
+.ferr.on{display:block}
+
+/* ── CARDS ── */
+.cg{display:grid;gap:10px}
+.c2{grid-template-columns:repeat(2,1fr)}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.cauto{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.cc{border:2px solid var(--brd);border-radius:var(--r);padding:14px 12px;cursor:pointer;background:var(--bg);transition:var(--tr);display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;font-size:14px;font-weight:600;color:var(--tx);user-select:none;min-height:76px;justify-content:center;line-height:1.4}
+.cc:hover{border-color:var(--y);background:var(--yl)}
+.cc.sel{border-color:var(--navy);background:var(--navy);color:#fff}
+.cc.ok{border-color:var(--ok)!important;background:#d8f0b8!important;color:#2a4a0a!important}
+.cc.bad{border-color:var(--err)!important;background:#FEE2E2!important;color:#991B1B!important;opacity:.7}
+.cc .ic{font-size:26px;line-height:1}
+.chk-card{border:2px solid var(--brd);border-radius:10px;padding:13px 15px;cursor:pointer;background:var(--bg);transition:var(--tr);display:flex;align-items:center;gap:11px;font-size:14px;font-weight:500;user-select:none}
+.chk-card:hover{border-color:var(--y);background:var(--yl)}
+.chk-card.chk{border-color:var(--navy);background:var(--navy);color:#fff}
+.chkb{width:20px;height:20px;border-radius:5px;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700}
+.chk-card.chk .chkb{background:var(--y);border-color:var(--y);color:var(--navy)}
+
+/* ── SURFACES ── */
+.sc{background:var(--surf);border-radius:var(--rl);padding:22px;margin-bottom:18px;border:1.5px solid var(--brd)}
+.hero{background:linear-gradient(135deg,#111E6C 0%,#1C3BA4 60%,#1d4ed8 100%);border-radius:var(--rl);padding:36px 32px;color:#fff;margin-bottom:26px;position:relative;overflow:hidden}
+.hero-deco{position:absolute;pointer-events:none}
+.hero h1,.hero h2{color:#fff}
+.hero p{color:rgba(255,255,255,.82);font-size:15px;line-height:1.7;margin-top:8px}
+.hero .tag{background:rgba(254,200,48,.2);color:var(--y);border:1px solid rgba(254,200,48,.3)}
+
+/* ── FEEDBACK ── */
+.fb{border-radius:9px;padding:12px 16px;font-size:14px;font-weight:600;margin-top:14px;display:none;align-items:center;gap:9px;line-height:1.55}
+.fb.on{display:flex}
+.fb.ok{background:#d8f0b8;color:#2a4a0a;border-left:4px solid var(--ok)}
+.fb.err{background:#FEF9EC;color:#7a4a00;border-left:4px solid var(--warn)}
+.fb.warn{background:#FEF9EC;color:#7a4a00;border-left:4px solid var(--warn)}
+
+/* ── SKIP ── */
+.skip-box{background:#FEF3C7;border:2px solid var(--warn);border-radius:10px;padding:14px 18px;margin-top:12px;display:none}
+.skip-box.on{display:block}
+
+/* ── DRONE / GRID ── */
+.rg{display:inline-grid;gap:5px}
+.rg5{grid-template-columns:repeat(5,58px)}
+.cell{border-radius:10px;background:var(--surf);border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:22px;transition:background .2s,border-color .2s;user-select:none;width:58px;height:58px}
+.cell.wall{background:#374151;border-color:#1F2937}
+.cell.red-zone{background:#FEE2E2;border-color:#FECACA}
+.cell.anim{background:var(--yl);border-color:var(--y);animation:cp .35s ease}
+.cell.done{background:#d8f0b8;border-color:var(--ok)}
+.cell.fail{background:#FEF9EC;border-color:var(--warn)}
+@keyframes cp{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.rg-wrap{overflow-x:auto}
+
+/* ── PROG SEQ ── */
+.prog-seq{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.prog-cmd{width:52px;height:52px;border-radius:10px;background:var(--surf);border:2.5px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:var(--tr);font-weight:700}
+.prog-cmd:hover{background:var(--yl);border-color:var(--y)}
+.prog-cmd.sel-err{border-color:var(--err);background:#FEE2E2;color:var(--err)}
+.prog-cmd.fixed{border-color:var(--ok);background:#d8f0b8;color:#2a4a0a;cursor:default}
+.prog-cmd.running{border-color:var(--aqua);background:#E0F2FE}
+.replace-opts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.rep-btn{width:52px;height:52px;border-radius:10px;background:var(--surf);border:2px solid var(--brd);font-size:22px;cursor:pointer;transition:var(--tr);display:flex;align-items:center;justify-content:center}
+.rep-btn:hover{background:var(--yl);border-color:var(--y)}
+
+/* ── ARROW CHOICE ── */
+.arrow-seq{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.arrow-opt{border:2.5px solid var(--brd);border-radius:12px;padding:12px 16px;cursor:pointer;background:var(--bg);transition:var(--tr);font-family:'IBM Plex Mono',monospace;font-size:18px;letter-spacing:2px;font-weight:600;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.arrow-opt:hover{border-color:var(--y);background:var(--yl)}
+.arrow-opt.sel{border-color:var(--navy);background:var(--navy);color:#fff}
+.arrow-opt.ok{border-color:var(--ok)!important;background:#d8f0b8!important;color:#2a4a0a!important}
+.arrow-opt.bad{border-color:var(--err)!important;background:#FEE2E2!important;color:#991B1B!important}
+
+/* ── ISOMETRIC VIEW ── */
+.iso-grid{display:inline-grid;gap:4px;border:2px solid var(--brd);border-radius:10px;padding:12px;background:var(--surf)}
+.iso-cell{width:52px;height:52px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:var(--tr);border:2px solid transparent}
+.iso-cell.sel{border-color:var(--navy);outline:2px solid var(--navy)}
+
+/* ── COVERS / POSTERS ── */
+.cov-grid{display:grid;gap:14px;margin:14px 0}
+.cov{border:2.5px solid var(--brd);border-radius:14px;overflow:hidden;cursor:pointer;transition:var(--tr);position:relative}
+.cov:hover{transform:translateY(-2px);box-shadow:var(--shm)}
+.cov.sel{border-color:var(--aqua);box-shadow:0 0 0 3px rgba(58,159,222,.2)}
+.cov.ok{border-color:var(--ok);box-shadow:0 0 0 3px rgba(107,170,40,.2)}
+.cov.bad{border-color:var(--err);opacity:.5}
+.cov svg{width:100%;display:block}
+.cov-lbl{position:absolute;bottom:0;left:0;right:0;padding:6px;text-align:center;font-size:12px;font-weight:700;background:rgba(0,0,0,.5);color:#fff}
+
+/* ── SITE MOCKUPS ── */
+.mock-opt{border:2.5px solid var(--brd);border-radius:12px;overflow:hidden;cursor:pointer;transition:var(--tr);position:relative}
+.mock-opt:hover{border-color:var(--y);transform:translateY(-2px)}
+.mock-opt.sel{border-color:var(--aqua)}
+.mock-opt.ok{border-color:var(--ok)!important}
+.mock-opt.bad{border-color:var(--err)!important;opacity:.6}
+.mock-lbl{font-size:12px;font-weight:700;padding:6px 10px;background:rgba(0,0,0,.5);color:#fff;position:absolute;bottom:0;left:0;right:0;text-align:center}
+
+/* ── FLOW DIAGRAM ── */
+.flow-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:0;margin:14px 0}
+.flow-node{border:2px solid var(--brd);border-radius:10px;padding:10px 18px;background:var(--bg);font-size:14px;font-weight:600;color:var(--navy);min-width:180px;text-align:center}
+.flow-node.home{background:var(--yl);border-color:var(--y)}
+.flow-arrow-row{display:flex;align-items:flex-start;gap:10px;margin:4px 0 4px 40px;flex-wrap:wrap}
+.flow-arrow{display:flex;flex-direction:column;align-items:center;gap:3px}
+.fa-lbl{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-weight:600}
+.fa-line{width:2px;height:26px;border-left:2.5px solid var(--brd)}
+.fa-line.err{border-left-color:var(--err);border-left-style:dashed}
+.fa-line.ok{border-left-color:var(--ok)}
+
+/* ── STORY ── */
+.story-cards{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.story-card{border:2px solid var(--brd);border-radius:10px;padding:12px;width:130px;cursor:pointer;background:var(--bg);transition:var(--tr);user-select:none;text-align:center;font-size:12px;font-weight:500;line-height:1.4}
+.story-card:hover{border-color:var(--y);background:var(--yl)}
+.story-card.sel{border-color:var(--navy);background:var(--navy);color:#fff}
+.story-card .si{font-size:26px;margin-bottom:6px}
+.story-drop{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.story-slot{width:130px;min-height:78px;border:2px dashed var(--brd);border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--surf);font-size:11px;color:var(--muted);cursor:pointer;transition:var(--tr);text-align:center;padding:6px}
+.story-slot.filled{border-style:solid;border-color:var(--navy);background:var(--bg);color:var(--tx);font-size:12px;font-weight:600}
+.story-slot:hover{border-color:var(--y)}
+
+/* ── STYLE CARDS ── */
+.style-cards{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+.style-card{border:2.5px solid var(--brd);border-radius:14px;overflow:hidden;cursor:pointer;transition:var(--tr);width:148px;flex-shrink:0}
+.style-card:hover{transform:translateY(-2px);box-shadow:var(--shm)}
+.style-card.sel{border-color:var(--aqua)}
+.style-card.ok{border-color:var(--ok)!important}
+.style-card.bad{border-color:var(--err)!important;opacity:.55}
+.style-inner{height:100px;display:flex;align-items:center;justify-content:center;font-size:34px}
+.style-lbl{padding:8px;font-size:12px;font-weight:600;text-align:center;background:var(--surf);border-top:1.5px solid var(--brd)}
+
+/* ── LOOP OPTS ── */
+.loop-opt{border:2px solid var(--brd);border-radius:10px;padding:14px 16px;cursor:pointer;background:var(--bg);transition:var(--tr);font-size:14px;line-height:1.6;font-weight:500;margin-bottom:8px}
+.loop-opt:hover{border-color:var(--y);background:var(--yl)}
+.loop-opt.sel{border-color:var(--navy);background:var(--navy);color:#fff}
+.loop-opt.ok{border-color:var(--ok);background:#d8f0b8;color:#2a4a0a}
+.loop-opt.bad{border-color:var(--err);background:#FEE2E2;color:#991B1B}
+.loop-code{font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.7;background:var(--surf);border-radius:8px;padding:10px 14px;margin:4px 0;border:1.5px solid var(--brd)}
+
+/* ── RULE ── */
+.rule-strip{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.rule-cell{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid var(--brd);font-weight:700}
+.rule-cell.clear{background:#d8f0b8;border-color:var(--ok)}
+.rule-cell.blocked{background:#FEE2E2;border-color:var(--err)}
+.rule-opt{border:2px solid var(--brd);border-radius:10px;padding:12px 16px;cursor:pointer;background:var(--bg);transition:var(--tr);margin-bottom:8px}
+.rule-opt:hover{border-color:var(--y);background:var(--yl)}
+.rule-opt.sel{border-color:var(--navy);background:var(--navy);color:#fff}
+.rule-opt.ok{border-color:var(--ok);background:#d8f0b8;color:#2a4a0a}
+.rule-opt.bad{border-color:var(--err);background:#FEE2E2;color:#991B1B}
+.cmd-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{display:inline-block;background:rgba(28,59,164,.1);color:var(--navy);border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.rule-opt.sel .chip{background:rgba(255,255,255,.2);color:#fff}
+.rule-opt.ok .chip{background:rgba(107,170,40,.2);color:#2a4a0a}
+.rule-opt.bad .chip{background:rgba(217,79,61,.15);color:#991B1B}
+
+/* ── RESULT ── */
+.bar-row{margin-bottom:14px}
+.bar-lbl{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:5px}
+.bar-tr{height:10px;background:var(--surf);border-radius:99px;overflow:hidden;border:1.5px solid var(--brd)}
+.bar-fi{height:100%;border-radius:99px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.b-algo{background:var(--navy)}.b-spat{background:var(--lilac)}.b-vis{background:var(--warn)}.b-str{background:var(--teal)}.b-crea{background:var(--ok)}.b-seq{background:var(--aqua)}
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.score-card{border-radius:var(--r);padding:18px;border:2px solid var(--brd);text-align:center}
+.score-card.it{border-color:var(--navy);background:linear-gradient(135deg,#1C3BA4,#111E6C);color:#fff}
+.score-card.vc{border-color:var(--warn);background:linear-gradient(135deg,#D4881A,#b36800);color:#fff}
+.score-card.pt{border-color:var(--teal);background:linear-gradient(135deg,#1FA8A0,#167a74);color:#fff}
+.score-num{font-size:38px;font-weight:700;font-family:'IBM Plex Mono',monospace;line-height:1}
+.score-card.it .score-num{color:#FEC830}
+.score-card.vc .score-num{color:#FFF5D0}
+.score-card.pt .score-num{color:#CCFDF8}
+.score-lbl{font-size:12px;font-weight:600;color:rgba(255,255,255,.8);margin-top:6px;line-height:1.3}
+.course-card{background:var(--bg);border:2.5px solid var(--y);border-radius:var(--rl);padding:24px;margin-bottom:14px;position:relative;margin-top:20px;box-shadow:0 4px 24px rgba(254,200,48,.18)}
+.course-card.alt{border-color:var(--brd);box-shadow:var(--sh)}
+.course-badge{position:absolute;top:-13px;left:18px;background:var(--y);color:var(--navy);font-size:11px;font-weight:700;padding:4px 16px;border-radius:20px;font-family:'IBM Plex Mono',monospace;box-shadow:0 2px 8px rgba(254,200,48,.4)}
+.why-list{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.why-item{display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.55}
+.why-item::before{content:'✓';color:var(--ok);font-weight:700;flex-shrink:0;margin-top:2px}
+.note{background:var(--yl);border-left:4px solid var(--y);border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;color:var(--navy);margin:12px 0;line-height:1.6}
+.sel-cnt{font-size:13px;color:var(--muted);font-weight:600;margin:8px 0 4px}
+.print-header{display:none}
+@media print{
+  .bar,.brow.no-print,.bar-restart,.btn-o,.btn-s,.btn-sm{display:none!important}
+  .print-header{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);border-bottom:1px solid var(--brd);padding-bottom:8px;margin-bottom:16px}
+}
+.logo-svg{height:28px;width:auto;display:block}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="bar">
+  <svg class="logo-svg" viewBox="0 0 407 98" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#lc)">
+      <path d="M171.968 57.7724L133.036 92.5343C130.24 94.6659 128.43 96.3603 126.347 97.2895C125.305 97.7267 124.153 98 122.783 98H12.7321C9.33248 98 5.49415 96.6336 3.30082 94.4473C1.05265 92.261 -0.921343 89.3642 0.449489 83.7345L19.537 12.1339C20.524 8.79978 20.9078 5.73899 23.1559 3.55271C25.3493 1.36643 28.4199 0 31.8196 0H140.06C141.157 0 142.309 0.163971 143.35 0.437256C146.202 1.20245 148.669 2.95148 150.314 5.4657L174.715 42.3592C177.95 48.0435 176.47 54.2744 171.973 57.7724Z" fill="#FEC830"/>
+      <path d="M62.51 76.547C57.646 76.547 53.462 75.744 49.958 74.137 46.454 72.53 43.74 70.185 41.821 67.097 39.902 64.009 38.838 60.248 38.635 55.81 38.586 53.618 38.559 51.285 38.559 48.809 38.559 46.333 38.586 43.977 38.635 41.73 38.838 37.396 39.913 33.723 41.86 30.712 43.806 27.7 46.542 25.405 50.073 23.825 53.605 22.245 57.75 21.453 62.51 21.453 66.348 21.453 69.753 21.923 72.72 22.868 75.686 23.814 78.181 25.077 80.204 26.656 82.228 28.236 83.763 29.974 84.81 31.86 85.858 33.745 86.411 35.609 86.461 37.445 86.51 37.904 86.373 38.287 86.039 38.593 85.704 38.899 85.31 39.052 84.849 39.052H73.641C73.076 39.052 72.654 38.965 72.374 38.785 72.094 38.604 71.848 38.336 71.645 37.981 71.289 37.216 70.762 36.412 70.071 35.571 69.38 34.729 68.432 34.002 67.231 33.39 66.03 32.778 64.456 32.472 62.51 32.472 59.593 32.472 57.301 33.237 55.639 34.767 53.978 36.298 53.068 38.746 52.914 42.113 52.76 46.502 52.76 50.94 52.914 55.428 53.068 58.997 54.016 61.577 55.754 63.156 57.493 64.736 59.796 65.528 62.663 65.528 64.61 65.528 66.337 65.195 67.845 64.534 69.353 63.872 70.543 62.839 71.415 61.434 72.287 60.03 72.72 58.232 72.72 56.04V54.586H65.504C64.939 54.586 64.467 54.395 64.084 54.012 63.7 53.629 63.508 53.159 63.508 52.596V46.934C63.508 46.371 63.7 45.901 64.084 45.518 64.467 45.136 64.939 44.944 65.504 44.944H84.849C85.414 44.944 85.874 45.136 86.231 45.518 86.587 45.901 86.768 46.371 86.768 46.934V55.657C86.768 60.046 85.77 63.796 83.774 66.906 81.778 70.016 78.949 72.404 75.292 74.06 71.634 75.716 67.374 76.547 62.51 76.547Z" fill="black"/>
+      <path d="M114.519 76.547C109.809 76.547 105.719 75.782 102.237 74.251 98.755 72.721 96.046 70.415 94.099 67.326 92.153 64.238 91.078 60.374 90.875 55.734 90.826 53.542 90.798 51.345 90.798 49.153 90.798 46.961 90.826 44.742 90.875 42.496 91.078 37.905 92.169 34.04 94.138 30.903 96.106 27.766 98.831 25.405 102.313 23.825 105.795 22.245 109.864 21.453 114.519 21.453 119.175 21.453 123.183 22.245 126.687 23.825 130.191 25.405 132.943 27.766 134.939 30.903 136.935 34.04 138.01 37.905 138.163 42.496 138.268 44.742 138.317 46.961 138.317 49.153 138.317 51.345 138.268 53.542 138.163 55.734 137.961 60.374 136.886 64.238 134.939 67.326 132.993 70.415 130.284 72.721 126.802 74.251 123.32 75.782 119.229 76.547 114.519 76.547ZM114.519 65.528C117.234 65.528 119.443 64.714 121.16 63.08 122.876 61.445 123.781 58.844 123.885 55.275 123.989 53.028 124.038 50.913 124.038 48.924 124.038 46.934 123.989 44.868 123.885 42.725 123.781 40.326 123.336 38.375 122.541 36.872 121.746 35.369 120.661 34.259 119.279 33.543 117.897 32.827 116.312 32.472 114.519 32.472 112.726 32.472 111.218 32.827 109.837 33.543 108.455 34.259 107.353 35.369 106.536 36.872 105.719 38.375 105.258 40.326 105.154 42.725 105.104 44.868 105.077 46.934 105.077 48.924 105.077 50.913 105.104 53.028 105.154 55.275 105.307 58.844 106.228 61.445 107.917 63.08 109.606 64.714 111.805 65.528 114.519 65.528Z" fill="black"/>
+      <path d="M142.731 76.547C142.166 76.547 141.733 76.361 141.426 75.995 141.119 75.629 141.015 75.159 141.119 74.58L151.789 23.42C151.894 22.841 152.173 22.371 152.634 22.005 153.094 21.639 153.582 21.453 154.092 21.453H164.456C164.966 21.453 165.377 21.639 165.684 22.005 165.991 22.371 166.095 22.847 165.991 23.42L155.321 74.58C155.217 75.159 154.948 75.629 154.515 75.995 154.081 76.361 153.604 76.547 153.094 76.547Z" fill="black"/>
+      <path d="M188.555 76.547C187.99 76.547 187.53 76.367 187.173 76.011 186.817 75.656 186.636 75.197 186.636 74.634V33.467H172.972C172.407 33.467 171.946 33.275 171.59 32.893 171.233 32.51 171.052 32.062 171.052 31.554V23.366C171.052 22.803 171.233 22.344 171.59 21.989 171.946 21.633 172.407 21.453 172.972 21.453H214.272C214.837 21.453 215.297 21.633 215.654 21.989 216.01 22.344 216.191 22.803 216.191 23.366V31.554C216.191 32.062 216.01 32.51 215.654 32.893 215.297 33.275 214.837 33.467 214.272 33.467H200.608V74.634C200.608 75.197 200.427 75.656 200.07 76.011 199.714 76.367 199.253 76.547 198.688 76.547Z" fill="black"/>
+      <path d="M223.023 76.547C222.459 76.547 221.998 76.367 221.642 76.011 221.285 75.656 221.104 75.197 221.104 74.634V23.366C221.104 22.803 221.285 22.344 221.642 21.989 221.998 21.633 222.459 21.453 223.023 21.453H258.873C259.438 21.453 259.899 21.633 260.255 21.989 260.612 22.344 260.793 22.803 260.793 23.366V30.559C260.793 31.122 260.612 31.581 260.255 31.936 259.899 32.291 259.438 32.472 258.873 32.472H234.385V43.348H257.185C257.749 43.348 258.21 43.54 258.566 43.922 258.923 44.305 259.104 44.775 259.104 45.338V51.995C259.104 52.504 258.923 52.952 258.566 53.334 258.21 53.717 257.749 53.908 257.185 53.908H234.385V65.528H259.488C260.052 65.528 260.513 65.709 260.869 66.064 261.226 66.419 261.407 66.878 261.407 67.441V74.634C261.407 75.197 261.226 75.656 260.869 76.011 260.513 76.367 260.052 76.547 259.488 76.547Z" fill="black"/>
+      <path d="M268.305 76.547C267.74 76.547 267.279 76.367 266.923 76.011 266.566 75.656 266.385 75.197 266.385 74.634V23.366C266.385 22.803 266.566 22.344 266.923 21.989 267.279 21.633 267.74 21.453 268.305 21.453H304.155C304.719 21.453 305.18 21.633 305.536 21.989 305.893 22.344 306.074 22.803 306.074 23.366V30.559C306.074 31.122 305.893 31.581 305.536 31.936 305.18 32.291 304.719 32.472 304.155 32.472H279.666V43.348H302.466C303.031 43.348 303.491 43.54 303.848 43.922 304.204 44.305 304.385 44.775 304.385 45.338V51.995C304.385 52.504 304.204 52.952 303.848 53.334 303.491 53.717 303.031 53.908 302.466 53.908H279.666V65.528H304.769C305.334 65.528 305.794 65.709 306.151 66.064 306.507 66.419 306.688 66.878 306.688 67.441V74.634C306.688 75.197 306.507 75.656 306.151 76.011 305.794 76.367 305.334 76.547 304.769 76.547Z" fill="black"/>
+      <path d="M313.635 76.547C313.071 76.547 312.61 76.367 312.254 76.011 311.897 75.656 311.716 75.197 311.716 74.634V23.366C311.716 22.803 311.897 22.344 312.254 21.989 312.61 21.633 313.071 21.453 313.635 21.453H321.773C322.644 21.453 323.27 21.644 323.653 22.027 324.037 22.409 324.279 22.704 324.383 22.907L343.114 53.897V23.366C343.114 22.803 343.295 22.344 343.651 21.989 344.007 21.633 344.468 21.453 345.033 21.453H354.245C354.81 21.453 355.27 21.633 355.627 21.989 355.983 22.344 356.164 22.803 356.164 23.366V74.634C356.164 75.143 355.983 75.591 355.627 75.973 355.27 76.356 354.81 76.547 354.245 76.547H346.031C345.214 76.547 344.611 76.345 344.227 75.935 343.843 75.525 343.602 75.246 343.498 75.093L324.767 46.781V74.634C324.767 75.197 324.586 75.656 324.229 76.011 323.873 76.367 323.412 76.547 322.847 76.547Z" fill="black"/>
+      <path d="M383.893 76.547C378.777 76.547 374.528 75.82 371.15 74.366 367.772 72.912 365.212 71.01 363.473 68.666 361.735 66.321 360.814 63.818 360.71 61.167 360.71 60.757 360.874 60.391 361.209 60.057 361.543 59.724 361.938 59.56 362.399 59.56H372.071C372.789 59.56 373.338 59.685 373.722 59.942 374.105 60.199 374.451 60.527 374.758 60.937 375.169 61.702 375.745 62.44 376.485 63.156 377.225 63.872 378.202 64.446 379.402 64.878 380.603 65.31 382.1 65.528 383.893 65.528 386.86 65.528 389.102 65.069 390.61 64.151 392.118 63.233 392.875 61.981 392.875 60.401 392.875 59.281 392.464 58.346 391.647 57.608 390.83 56.871 389.508 56.204 387.693 55.619 385.878 55.034 383.46 54.433 380.439 53.821 376.551 53.006 373.234 51.946 370.497 50.645 367.761 49.344 365.672 47.634 364.241 45.518 362.81 43.403 362.091 40.763 362.091 37.599 362.091 34.434 362.974 31.706 364.74 29.258 366.506 26.809 368.973 24.896 372.148 23.519 375.323 22.142 379.084 21.453 383.433 21.453 386.964 21.453 390.073 21.912 392.76 22.83 395.447 23.748 397.711 24.973 399.554 26.503 401.396 28.034 402.789 29.651 403.737 31.362 404.686 33.073 405.185 34.74 405.234 36.374 405.234 36.784 405.081 37.15 404.774 37.484 404.467 37.817 404.083 37.981 403.622 37.981H393.489C392.924 37.981 392.442 37.877 392.03 37.675 391.619 37.473 391.263 37.14 390.956 36.68 390.649 35.56 389.843 34.576 388.538 33.734 387.233 32.893 385.533 32.472 383.433 32.472 381.179 32.472 379.43 32.865 378.174 33.658 376.918 34.45 376.293 35.658 376.293 37.292 376.293 38.315 376.639 39.206 377.33 39.971 378.021 40.736 379.172 41.397 380.784 41.96 382.396 42.523 384.612 43.108 387.424 43.72 392.08 44.589 395.841 45.671 398.709 46.972 401.577 48.273 403.672 49.957 405.004 52.023 406.336 54.089 407 56.679 407 59.789 407 63.26 406.013 66.255 404.044 68.78 402.076 71.306 399.351 73.23 395.869 74.558 392.387 75.886 388.395 76.547 383.893 76.547Z" fill="black"/>
+    </g>
+    <defs><clipPath id="lc"><rect width="407" height="98" fill="white"/></clipPath></defs>
+  </svg>
+  <div class="pb-wrap">
+    <div class="pb-lbl" id="pbLbl">Початок</div>
+    <div class="pb-track"><div class="pb-fill" id="pbFill" style="width:0%"></div></div>
+  </div>
+  <button class="bar-restart no-print" onclick="confirmRestart()">↺ Спочатку</button>
+</div>
+
+<div class="wrap">
+
+<!-- ══════════════════════════════════════════
+     S0 — WELCOME + FORM
+══════════════════════════════════════════ -->
+<div class="screen active" id="s0">
+  <div class="hero">
+    <svg class="hero-deco" style="right:-20px;top:-20px;width:180px;height:180px" viewBox="0 0 180 180"><circle cx="140" cy="40" r="55" fill="#FEC830"/><rect x="20" y="120" width="35" height="35" fill="#FEC830" transform="rotate(25,37,137)"/><circle cx="110" cy="155" r="20" fill="none" stroke="#FEC830" stroke-width="6"/></svg>
+    <div class="tag">GoITeens · Діагностика</div>
+    <h1>Діагностика digital-схильностей</h1>
+    <p>Коротка інтерактивна подорож, яка допоможе зрозуміти, які digital-завдання подобаються тобі найбільше.</p>
+  </div>
+  <div class="sc">
+    <div class="fg"><label class="fl">Ім'я дитини *</label><input class="fi" id="inp-name" type="text" placeholder="Наприклад: Аліна" style="max-width:320px" autocomplete="off"><div class="ferr" id="err-name">Будь ласка, вкажіть ім'я</div></div>
+    <div class="fg"><label class="fl">Вік *</label><div class="cg c3" style="max-width:290px"><div class="cc" onclick="pickAge(11,this)" data-age="11"><span class="ic">🎂</span>11 років</div><div class="cc" onclick="pickAge(12,this)" data-age="12"><span class="ic">🎂</span>12 років</div><div class="cc" onclick="pickAge(13,this)" data-age="13"><span class="ic">🎂</span>13 років</div></div><div class="ferr" id="err-age">Будь ласка, оберіть вік</div></div>
+    <div class="fg"><label class="fl">Дата</label><input class="fi" id="inp-date" type="date" style="max-width:180px"></div>
+  </div>
+  <div class="brow"><button class="btn btn-p" style="font-size:16px;padding:14px 32px" onclick="startDiag()">Розпочати діагностику →</button></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S1 — INTRO FOR CHILD
+══════════════════════════════════════════ -->
+<div class="screen" id="s1">
+  <div style="text-align:center;padding:10px 0">
+    <div style="font-size:60px;margin-bottom:16px">🤖 🧩 🎨 💡 🏆</div>
+    <h1 style="max-width:500px;margin:0 auto 14px">Привіт, <span id="intro-name"></span>!</h1>
+    <div class="sc" style="max-width:540px;margin:0 auto;text-align:left">
+      <p style="font-size:16px;line-height:1.75">Сьогодні ти спробуєш себе у різних ролях: працюватимеш з логікою та ігровими механіками, збиратимеш структуру digital-проєкту, аналізуватимеш візуальні рішення та шукатимеш нестандартні ідеї.</p>
+      <p style="font-size:16px;line-height:1.75;margin-top:10px">Тут <strong>немає оцінок</strong> — головне уважно виконувати завдання та зрозуміти, що тобі цікаво найбільше. 🚀</p>
+    </div>
+    <div class="brow" style="justify-content:center;margin-top:18px">
+      <button class="btn btn-s btn-sm" onclick="go(0)">← Назад</button>
+      <button class="btn btn-p" style="padding:13px 28px;font-size:16px" onclick="go(3)">Почати ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S2 — INTRO FOR CHILD
+══════════════════════════════════════════ -->
+<div class="screen" id="s2" style="display:none!important">
+  <div class="hero">
+    <div class="tag">Привіт, <span id="intro-name"></span>!</div>
+    <h2>Як це працює</h2>
+    <p>Ти побачиш 18 завдань різного рівня — логічні, візуальні, творчі. Після цього два коротких запитання про інтереси. Правильні відповіді ти не побачиш одразу — і це нормально. Просто уважно слухай і відповідай так, як вважаєш за потрібне.</p>
+  </div>
+  <div class="brow">
+    <button class="btn btn-p" style="font-size:16px;padding:14px 28px" onclick="go(3)">Почати завдання →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S3 — T1: Drone route (algorithmic, w:1)
+══════════════════════════════════════════ -->
+<div class="screen" id="s3">
+  <div class="tag">Завдання 1 · Алгоритмічне мислення</div>
+  <div class="lvl l1">Легкий рівень</div>
+  <h2>Проклади маршрут для дрона 🚁</h2>
+  <p class="muted" style="margin-bottom:16px"><strong>Дрон має забрати посилку й дістатися до точки доставки. Обери правильну програму.</strong></p>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+    <div>
+      <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px">Поле 5×5:</p>
+      <div class="rg-wrap"><div class="rg rg5" id="drone-grid"></div></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:6px">🚁 Дрон &nbsp;📦 Посилка &nbsp;🏠 Доставка &nbsp;🚧 Перешкода</p>
+    </div>
+    <div style="flex:1;min-width:240px">
+      <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px">Обери правильну програму:</p>
+      <div id="drone-opts"></div>
+    </div>
+  </div>
+  <div class="fb" id="fb-t1"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(1)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(4)">Пропустити</button><button class="btn btn-p" onclick="go(4)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S4 — T2: Best poster (visual, w:1)
+══════════════════════════════════════════ -->
+<div class="screen" id="s4">
+  <div class="tag">Завдання 2 · Візуальне мислення</div>
+  <div class="lvl l1">Легкий рівень</div>
+  <h2>Розглянь три постери 🎨</h2>
+  <p class="muted" style="margin-bottom:14px"><strong>Усі постери рекламують один і той самий фестиваль. Який з них тобі подобається найбільше?</strong></p>
+  <div class="cg c3" id="poster-opts" style="margin:14px 0"></div>
+  <div id="poster-reason-wrap" style="display:none;margin-top:16px">
+    <div class="sc"><h3 style="margin-bottom:10px">Чому цей постер працює краще?</h3><div id="poster-reasons" style="display:flex;flex-direction:column;gap:8px"></div></div>
+  </div>
+  <div class="fb" id="fb-t2"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(3)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(5)">Пропустити</button><button class="btn btn-p" onclick="go(5)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S5 — T3: Shape rotation (spatial, w:1)
+══════════════════════════════════════════ -->
+<div class="screen" id="s5">
+  <div class="tag">Завдання 3 · Просторове мислення</div>
+  <div class="lvl l1">Легкий рівень</div>
+  <h2>Знайди фігуру після повороту 🔄</h2>
+  <p class="muted" style="margin-bottom:16px"><strong>Уяви, що фігуру повернули на 90° за годинниковою стрілкою. Який варіант вийде?</strong></p>
+  <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
+    <div>
+      <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px">Оригінальна фігура:</p>
+      <div id="rot-orig"></div>
+    </div>
+    <div style="flex:1;min-width:280px">
+      <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px">Обери варіант:</p>
+      <div class="cg c2" id="rot-opts" style="max-width:420px"></div>
+    </div>
+  </div>
+  <div class="fb" id="fb-t3"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(4)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(6)">Пропустити</button><button class="btn btn-p" onclick="go(6)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S6 — T4: Page structure (structural+sequence, w:1)
+══════════════════════════════════════════ -->
+<div class="screen" id="s6">
+  <div class="tag">Завдання 4 · Структурне мислення</div>
+  <div class="lvl l1">Легкий рівень</div>
+  <h2>Збери структуру сторінки 🧩</h2>
+  <p class="muted" style="margin-bottom:14px"><strong>У якому порядку краще розташувати блоки, щоб відвідувач одразу зрозумів, про що сайт і що робити далі?</strong></p>
+  <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px">Обери правильний порядок:</p>
+  <div id="page-struct-opts"></div>
+  <div class="fb" id="fb-t4"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(5)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(7)">Пропустити</button><button class="btn btn-p" onclick="go(7)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S7 — T5: Chasm crossing (creative, w:1)
+══════════════════════════════════════════ -->
+<div class="screen" id="s7">
+  <div class="tag">Завдання 5 · Гнучкість ідей</div>
+  <div class="lvl l1">Легкий рівень</div>
+  <h2>Допоможи герою перебратися через прірву 🌋</h2>
+  <p class="muted" style="margin-bottom:6px"><strong>Обери рівно 3 способи, які справді допоможуть перебратися на інший бік.</strong></p>
+  <div class="sel-cnt" id="chasm-cnt">Обрано: 0 / 3</div>
+  <div class="cg cauto" id="chasm-opts"></div>
+  <div class="fb" id="fb-t5"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(6)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(8)">Пропустити</button><button class="btn btn-p" onclick="go(8)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S8 — T6: Story order (sequence, w:2)
+══════════════════════════════════════════ -->
+<div class="screen" id="s8">
+  <div class="tag">Завдання 6 · Послідовність та зв'язність</div>
+  <div class="lvl l2">Середній рівень</div>
+  <h2>Вибудуй історію у правильному порядку 📖</h2>
+  <p class="muted" style="margin-bottom:6px">Нижче 6 картинок. Одна зайва. Прибери її, а решту розташуй так, щоб вийшла логічна історія.</p>
+  <p class="muted" style="margin-bottom:14px">Натискай на картинки: спочатку прибери зайву, потім обирай решту в порядку від 1 до 5.</p>
+  <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px">Картинки:</p>
+  <div class="story-cards" id="story-cards"></div>
+  <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;margin-top:14px">Твоя послідовність (1→5):</p>
+  <div class="story-drop" id="story-drop"></div>
+  <button class="btn btn-s btn-sm" style="margin-top:8px" onclick="resetStory()">✕ Скинути</button>
+  <div class="fb" id="fb-t6"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(7)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(9)">Пропустити</button><button class="btn btn-p" onclick="go(9)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S9 — T7: Fix drone program (algorithmic, w:2)
+══════════════════════════════════════════ -->
+<div class="screen" id="s9">
+  <div class="tag">Завдання 7 · Алгоритмічне мислення</div>
+  <div class="lvl l2">Середній рівень</div>
+  <h2>Виправ програму дрона 🛠️</h2>
+  <p class="muted" style="margin-bottom:18px"><strong>Одна команда неправильна. Перевір програму зліва направо, знайди помилку та заміни її.</strong></p>
+  <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
+    <div>
+      <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px">Поле з дроном:</p>
+      <div class="rg-wrap"><div class="rg rg5" id="fix-grid"></div></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:6px">🚁 Дрон &nbsp;🏠 Доставка &nbsp;🚧 Перешкода</p>
+      <button class="btn btn-o btn-sm" style="margin-top:10px" id="btn-bug7" onclick="showBugAnim7()">▶ Показати де помилка</button>
+    </div>
+    <div style="flex:1;min-width:220px">
+      <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">Програма — натисни на помилкову команду:</p>
+      <div class="prog-seq" id="prog-seq7"></div>
+      <div id="rep7-wrap" style="display:none"><p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px">Замінити на:</p><div class="replace-opts" id="rep7-opts"></div></div>
+      <p id="t7-hint" style="font-size:13px;color:var(--muted);margin-top:10px;line-height:1.6">Натисни на команду, через яку дрон не доставить посилку.</p>
+    </div>
+  </div>
+  <div class="fb" id="fb-t7"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(8)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(10)">Пропустити</button><button class="btn btn-p" onclick="go(10)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S10 — T8: Top view of cubes (spatial, w:2)
+══════════════════════════════════════════ -->
+<div class="screen" id="s10">
+  <div class="tag">Завдання 8 · Просторове мислення</div>
+  <div class="lvl l2">Середній рівень</div>
+  <h2>Подивися на конструкцію зверху 🧊</h2>
+  <p class="muted" style="margin-bottom:16px">Нижче показана конструкція з кубиків. Числа показують, скільки кубиків у кожній стопці. Який вигляд матиме конструкція, якщо подивитися на неї <strong>зверху</strong>?</p>
+  <div class="sc" style="text-align:center;overflow-x:auto">
+    <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px">Конструкція (вид збоку):</p>
+    <div id="tower-side" style="display:inline-flex;gap:4px;align-items:flex-end;margin-bottom:14px"></div>
+    <p style="font-size:12px;color:var(--muted)">Числа = кількість кубиків у стопці</p>
+  </div>
+  <p style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px">Обери правильний вид зверху:</p>
+  <div class="cg c2" id="tower-opts" style="max-width:500px"></div>
+  <div class="fb" id="fb-t8"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(9)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(11)">Пропустити</button><button class="btn btn-p" onclick="go(11)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S11 — T9: Ocean game style (visual, w:2)
+══════════════════════════════════════════ -->
+<div class="screen" id="s11">
+  <div class="tag">Завдання 9 · Візуальне мислення</div>
+  <div class="lvl l2">Середній рівень</div>
+  <h2>Обери стиль для гри про океан 🌊</h2>
+  <p class="muted" style="margin-bottom:14px"><strong>Уяви, що ти створюєш спокійну та дружню гру про дослідження океану. Яке оформлення підходить найкраще?</strong></p>
+  <div class="cg c3" id="ocean-opts" style="margin:14px 0"></div>
+  <div id="ocean-reason-wrap" style="display:none;margin-top:16px">
+    <div class="sc"><h3 style="margin-bottom:10px">Чому цей варіант підходить краще?</h3><div id="ocean-reasons" style="display:flex;flex-direction:column;gap:8px"></div></div>
+  </div>
+  <div class="fb" id="fb-t9"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(10)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(12)">Пропустити</button><button class="btn btn-p" onclick="go(12)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S12 — T10: Best site screen (structural+visual, w:2)
+══════════════════════════════════════════ -->
+<div class="screen" id="s12">
+  <div class="tag">Завдання 10 · Структурне мислення</div>
+  <div class="lvl l2">Середній рівень</div>
+  <h2>Обери найзручніший екран сайту 💻</h2>
+  <p class="muted" style="margin-bottom:14px"><strong>На якому екрані користувач швидше зрозуміє, що це за проєкт і куди натиснути?</strong></p>
+  <div class="cg c3" id="site-opts"></div>
+  <div id="site-reason-wrap" style="display:none;margin-top:16px">
+    <div class="sc"><h3 style="margin-bottom:10px">Чому на цьому екрані легше зрозуміти, що робити далі?</h3><div id="site-reasons" style="display:flex;flex-direction:column;gap:8px"></div></div>
+  </div>
+  <div class="fb" id="fb-t10"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(11)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(13)">Пропустити</button><button class="btn btn-p" onclick="go(13)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S13 — T11: AI prompt (creative+structural, w:2)
+══════════════════════════════════════════ -->
+<div class="screen" id="s13">
+  <div class="tag">Завдання 11 · Гнучкість ідей</div>
+  <div class="lvl l2">Середній рівень</div>
+  <h2>Допоможи AI створити потрібне зображення ✨</h2>
+  <p class="muted" style="margin-bottom:14px"><strong>Потрібен постер: дружній робот у футуристичній бібліотеці, синьо-жовта палітра, без написів. Який запит найточніший?</strong></p>
+  <div id="ai-prompt-opts"></div>
+  <div class="fb" id="fb-t11"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(12)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(14)">Пропустити</button><button class="btn btn-p" onclick="go(14)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S14 — T12: Shorten robot loop (algorithmic, w:2)
+══════════════════════════════════════════ -->
+<div class="screen" id="s14">
+  <div class="tag">Завдання 12 · Алгоритмічне мислення</div>
+  <div class="lvl l2">Середній рівень</div>
+  <h2>Скороти програму робота 🔁</h2>
+  <p class="muted" style="margin-bottom:14px"><strong>Робот збирає кристали однаковими діями. Яка програма виконає завдання коротше?</strong></p>
+  <div class="sc" style="margin-bottom:14px">
+    <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px">Доріжка з 4 кристалами:</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <div style="width:48px;height:48px;border-radius:8px;background:#e0f2fe;border:2px solid var(--aqua);display:flex;align-items:center;justify-content:center;font-size:20px">🤖</div>
+      <div style="width:48px;height:48px;border-radius:8px;background:var(--surf);border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:20px">💎</div>
+      <div style="width:48px;height:48px;border-radius:8px;background:var(--surf);border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:20px">💎</div>
+      <div style="width:48px;height:48px;border-radius:8px;background:var(--surf);border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:20px">💎</div>
+      <div style="width:48px;height:48px;border-radius:8px;background:var(--surf);border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:20px">💎</div>
+    </div>
+  </div>
+  <div id="loop-opts"></div>
+  <div id="loop-followup" style="display:none;margin-top:16px">
+    <div class="sc">
+      <h3 style="margin-bottom:10px">Що потрібно змінити, якщо кристалів стане шість?</h3>
+      <div class="cg c4" style="max-width:300px" id="loop-num-opts"></div>
+      <div class="fb" id="fb-t12b"></div>
+    </div>
+  </div>
+  <div class="fb" id="fb-t12"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(13)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(15)">Пропустити</button><button class="btn btn-p" onclick="go(15)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S15 — T13: App features (structural+creative, w:2)
+══════════════════════════════════════════ -->
+<div class="screen" id="s15">
+  <div class="tag">Завдання 13 · Структурне мислення</div>
+  <div class="lvl l2">Середній рівень</div>
+  <h2>Обери функції для застосунку 📲</h2>
+  <p class="muted" style="margin-bottom:6px"><strong>Ти створюєш застосунок, який допомагає школярам планувати навчання. Обери рівно 3 функції, що розв'язують різні задачі.</strong></p>
+  <div class="sel-cnt" id="app-cnt">Обрано: 0 / 3</div>
+  <div class="cg cauto" id="app-opts"></div>
+  <div class="fb" id="fb-t13"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(14)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(16)">Пропустити</button><button class="btn btn-p" onclick="go(16)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S16 — T14: Safe path to portal (spatial, w:3)
+══════════════════════════════════════════ -->
+<div class="screen" id="s16">
+  <div class="tag">Завдання 14 · Просторове мислення</div>
+  <div class="lvl l3">Підвищений рівень</div>
+  <h2>Обери безпечний маршрут до порталу 🗺️</h2>
+  <p class="muted" style="margin-bottom:8px">На кожній карті вже прокладено маршрут. Обери той, що виконує <strong>всі</strong> правила:</p>
+  <ul style="margin:0 0 12px 20px;font-size:14px;color:var(--muted);line-height:2">
+    <li>герой не наступає на 🚫 клітинки</li>
+    <li>проходить через міст лише один раз</li>
+    <li>дістається до порталу не більше ніж за 10 кроків</li>
+  </ul>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Легенда:</div>
+    <div style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600">
+      <div style="width:28px;height:28px;border-radius:6px;background:#FDE68A;border:2px solid #D4881A;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;font-family:monospace;color:#8a4a00;flex-shrink:0">міст</div>
+      <span>Міст — можна пройти лише раз</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600">
+      <div style="width:28px;height:28px;border-radius:6px;background:#FEE2E2;border:2px solid #F87171;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🚫</div>
+      <span>Заборонена клітинка</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600">
+      <div style="width:28px;height:28px;border-radius:6px;background:#ECEEF6;border:2px solid #C8CBDF;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">🌀</div>
+      <span>Портал</span>
+    </div>
+  </div>
+  <div id="path-opts"></div>
+  <div class="fb" id="fb-t14"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(15)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(17)">Пропустити</button><button class="btn btn-p" onclick="go(17)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S17 — T15: Robot conditional (algorithmic, w:3)
+══════════════════════════════════════════ -->
+<div class="screen" id="s17">
+  <div class="tag">Завдання 15 · Алгоритмічне мислення</div>
+  <div class="lvl l3">Підвищений рівень</div>
+  <h2>Навчи робота діяти за правилом 🚦</h2>
+  <p class="muted" style="margin-bottom:6px">Траса складається із звичайних та заблокованих клітинок. Робот знає два правила:</p>
+  <div class="sc" style="margin:12px 0">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+      <div style="display:flex;align-items:center;gap:8px"><div class="rule-cell clear">🟩</div><span style="font-size:14px;font-weight:600">Вільна → <strong>крок вперед</strong></span></div>
+      <div style="display:flex;align-items:center;gap:8px"><div class="rule-cell blocked">🟥</div><span style="font-size:14px;font-weight:600">Перешкода → <strong>стрибнути</strong></span></div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;margin-bottom:8px">Траса:</p>
+    <div class="rule-strip" id="rule-strip15"></div>
+  </div>
+  <p style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:10px">Яка послідовність команд правильна?</p>
+  <div id="rule-opts15"></div>
+  <div class="fb" id="fb-t15"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(16)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(18)">Пропустити</button><button class="btn btn-p" onclick="go(18)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S18 — T16: Odd element (visual, w:3)
+══════════════════════════════════════════ -->
+<div class="screen" id="s18">
+  <div class="tag">Завдання 16 · Візуальне мислення</div>
+  <div class="lvl l3">Підвищений рівень</div>
+  <h2>Знайди деталі, що не пасують до стилю 👀</h2>
+  <p class="muted" style="margin-bottom:14px"><strong>Для фантастичного міста підібрали вісім елементів. Два з них вибиваються із загального оформлення. Знайди обидва.</strong></p>
+  <div class="sel-cnt" id="city-cnt">Обрано: 0 / 2</div>
+  <div class="style-cards" id="futurecity-cards"></div>
+  <div class="fb" id="fb-t16"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(17)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(19)">Пропустити</button><button class="btn btn-p" onclick="go(19)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S19 — T17: Fix site logic (structural+algo+seq, w:3)
+══════════════════════════════════════════ -->
+<div class="screen" id="s19">
+  <div class="tag">Завдання 17 · Структурне мислення</div>
+  <div class="lvl l3">Підвищений рівень</div>
+  <h2>Віднови логіку сайту 🔗</h2>
+  <p class="muted" style="margin-bottom:14px"><strong>Користувач хоче зареєструватися на сайті. У схемі навігації переплутали один перехід. Знайди його та виправ.</strong></p>
+  <div class="sc" style="margin-bottom:14px">
+    <p style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px">Схема навігації сайту:</p>
+    <div id="site-flow"></div>
+  </div>
+
+  <div class="fb" id="fb-t17"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(18)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(20)">Пропустити</button><button class="btn btn-p" onclick="go(20)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S20 — T18: Make level interesting (creative+structural, w:3)
+══════════════════════════════════════════ -->
+<div class="screen" id="s20">
+  <div class="tag">Завдання 18 · Гнучкість ідей</div>
+  <div class="lvl l3">Підвищений рівень</div>
+  <h2>Зроби рівень гри цікавішим 🎮</h2>
+  <p class="muted" style="margin-bottom:6px"><strong>Обери рівно 3 елементи, які додадуть різні можливості та зроблять рівень цікавішим.</strong></p>
+  <div class="sel-cnt" id="level-cnt">Обрано: 0 / 3</div>
+  <div class="cg cauto" id="level-opts"></div>
+  <div class="fb" id="fb-t18"></div>
+  <div class="brow-sp"><div><button class="btn btn-s btn-sm" onclick="go(19)">← Назад</button></div><div style="display:flex;gap:8px"><button class="btn btn-s btn-sm" onclick="skipConfirm(21)">Пропустити</button><button class="btn btn-p" onclick="go(21)">Далі →</button></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S21 — FINAL Q1: what to create
+══════════════════════════════════════════ -->
+<div class="screen" id="s21">
+  <div class="tag">Фінальні запитання</div>
+  <h2>Ще два коротких запитання ⭐</h2>
+  <p class="muted" style="margin-bottom:20px">Ці відповіді допоможуть підібрати найкращий напрям саме для тебе.</p>
+  <div class="sc">
+    <h3 style="margin-bottom:12px">Що тобі було б найцікавіше створити? <span style="font-size:12px;font-weight:500;color:var(--muted)">(можна обрати кілька)</span></h3>
+    <div class="cg cauto" id="fq1-wrap">
+      <div class="cc" onclick="pickFQ1('minecraft',this)"><span class="ic">⛏️</span>Світ у Minecraft</div>
+      <div class="cc" onclick="pickFQ1('roblox',this)"><span class="ic">🕹️</span>Власну гру в Roblox</div>
+      <div class="cc" onclick="pickFQ1('gamedev',this)"><span class="ic">🎮</span>Повноцінну гру з рівнями</div>
+      <div class="cc" onclick="pickFQ1('drawing',this)"><span class="ic">🎨</span>Персонажа або комікс</div>
+      <div class="cc" onclick="pickFQ1('design',this)"><span class="ic">✏️</span>Оформлення бренду або соцмереж</div>
+      <div class="cc" onclick="pickFQ1('frontend',this)"><span class="ic">🌐</span>Власний сайт</div>
+      <div class="cc" onclick="pickFQ1('ai',this)"><span class="ic">🤖</span>Digital-проєкт з AI</div>
+    </div>
+    <div class="ferr" id="err-fq1" style="margin-top:8px">Будь ласка, оберіть один варіант</div>
+  </div>
+  <div class="sc">
+    <h3 style="margin-bottom:12px">Що тобі вже знайоме? (можна обрати кілька)</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label class="chk-card" onclick="togFQ2('minecraft',this)"><div class="chkb" id="fq2-minecraft"></div>⛏️ Minecraft</label>
+      <label class="chk-card" onclick="togFQ2('roblox',this)"><div class="chkb" id="fq2-roblox"></div>🕹️ Roblox</label>
+      <label class="chk-card" onclick="togFQ2('gamedev',this)"><div class="chkb" id="fq2-gamedev"></div>🎮 Створення ігор</label>
+      <label class="chk-card" onclick="togFQ2('drawing',this)"><div class="chkb" id="fq2-drawing"></div>🎨 Малювання на планшеті</label>
+      <label class="chk-card" onclick="togFQ2('design',this)"><div class="chkb" id="fq2-design"></div>✏️ Дизайн</label>
+      <label class="chk-card" onclick="togFQ2('frontend',this)"><div class="chkb" id="fq2-frontend"></div>🌐 Створення сайтів</label>
+      <label class="chk-card" onclick="togFQ2('ai',this)"><div class="chkb" id="fq2-ai"></div>🤖 AI-сервіси для зображень, текстів або відео</label>
+      <label class="chk-card" onclick="togFQ2('nothing',this)"><div class="chkb" id="fq2-nothing"></div>🌱 Поки нічого з цього</label>
+    </div>
+  </div>
+  <div class="brow-sp" style="margin-top:18px">
+    <button class="btn btn-s btn-sm" onclick="go(20)">← Назад</button>
+    <button class="btn btn-p" style="font-size:16px;padding:13px 28px" onclick="finish()">Завершити діагностику →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     S22 — RESULT
+══════════════════════════════════════════ -->
+<div class="screen" id="s22">
+  <div class="hero" style="padding:32px 32px 28px">
+    <svg class="hero-deco" style="right:0;top:0;width:210px;height:170px;opacity:.1" viewBox="0 0 210 170"><polygon points="105,8 200,165 10,165" fill="none" stroke="#FEC830" stroke-width="10"/><circle cx="160" cy="40" r="28" fill="#FEC830" opacity=".5"/><rect x="20" y="100" width="35" height="35" fill="#FEC830" transform="rotate(15,37,117)"/></svg>
+    <div class="tag" style="background:rgba(254,200,48,.2);color:var(--y);border:1px solid rgba(254,200,48,.3);margin-bottom:12px">Результат діагностики</div>
+    <h1 style="font-size:32px;margin-bottom:4px;color:#fff">Digital-профіль: <span id="hero-name-res"></span></h1>
+    <p id="res-meta" style="color:rgba(255,255,255,.65);font-size:14px;margin-bottom:20px"></p>
+    <div>
+      <p style="font-size:11px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;font-family:'IBM Plex Mono',monospace">Найбільш виражені сильні сторони</p>
+      <div id="res-badges" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+  </div>
+  <div style="background:linear-gradient(135deg,#EEF2FF 0%,#F0F7FF 100%);border-radius:var(--rl);padding:24px;margin-bottom:18px;border:1.5px solid #C7D2FE">
+    <h3 style="margin-bottom:18px;color:var(--navy);display:flex;align-items:center;gap:8px">📊 <span>Профіль навичок</span></h3>
+    <div id="skill-bars"></div>
+    <div class="score-grid" id="big-scores" style="margin-top:20px"></div>
+  </div>
+  <div style="background:linear-gradient(135deg,#FFFBEB 0%,#FFF7DC 100%);border-radius:var(--rl);padding:24px;margin-bottom:18px;border:1.5px solid #FDE68A">
+    <h3 style="margin-bottom:12px;color:var(--navy);display:flex;align-items:center;gap:8px">💬 <span>Короткий висновок</span></h3>
+    <p id="res-summary" style="font-size:15px;line-height:1.8;color:#1A1A1A"></p>
+  </div>
+  <div id="main-course-block"></div>
+  <div id="alt-course-block"></div>
+  <div id="dev-block-wrap"></div>
+  <div id="note-fallback" class="note" style="display:none"></div>
+  <div class="note" style="margin-top:16px;font-size:13px;line-height:1.65">Результат є орієнтиром за підсумками короткої інтерактивної діагностики. Остаточну рекомендацію варто узгодити з методистом з урахуванням інтересів дитини, попереднього досвіду та доступних форматів навчання.</div>
+  <div class="print-header"><span>GoITeens · Діагностика 11–13 років</span><span id="print-meta-top"></span></div>
+  <div class="brow no-print" style="margin-top:22px;gap:10px">
+    <button class="btn btn-p" onclick="savePDF()">📄 Зберегти PDF</button>
+    <button class="btn btn-o" onclick="confirmRestart()">↺ Нова діагностика</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   COURSES CONFIG
+═══════════════════════════════════════════════════════════ */
+const COURSES = {
+  minecraft: {
+    title: 'Minecraft',
+    minAge: 9, maxAge: 11,
+    direction: 'games', level: 'basic',
+    description: 'Навчання програмуванню через випробування та створення власних рішень у світі Minecraft.'
+  },
+  roblox: {
+    title: 'Roblox',
+    minAge: 11, maxAge: 13,
+    direction: 'games', level: 'middle',
+    description: 'Створення власних ігор у Roblox Studio та поступове знайомство з програмуванням мовою Lua.'
+  },
+  gamedev: {
+    title: 'GameDev Junior',
+    minAge: 12, maxAge: 14,
+    direction: 'games', level: 'advanced',
+    description: 'Створення 2D- та 3D-ігор у Unity: ігрові механіки, дизайн рівнів, анімація та visual scripting.'
+  },
+  drawing: {
+    title: 'Малювання на планшеті',
+    minAge: 11, maxAge: 13,
+    direction: 'drawing',
+    description: 'Цифрове малювання: персонажі, ілюстрації, комікси та власні візуальні роботи.'
+  },
+  design: {
+    title: 'Design Junior',
+    minAge: 10, maxAge: 13,
+    direction: 'design',
+    description: 'Створення власного бренду, оформлення контенту для соцмереж і дизайн персонального сайту-портфоліо.'
+  },
+  frontend: {
+    title: 'Frontend Junior',
+    minAge: 10, maxAge: 13,
+    direction: 'frontend',
+    description: 'Створення вебсайтів: від структури й зовнішнього вигляду сторінки до інтерактивних елементів.'
+  },
+  ai: {
+    title: 'AI Creator',
+    minAge: 10, maxAge: 15,
+    direction: 'ai',
+    description: 'Створення digital-проєктів за допомогою AI-інструментів: зображення, відео, тексти, ідеї та творчі експерименти.'
+  }
+};
+
+const INTERESTS = {
+  minecraft: 'minecraft', roblox: 'roblox', gamedev: 'gamedev',
+  drawing: 'drawing', design: 'design', frontend: 'frontend', ai: 'ai'
+};
+
+const SNAMES = ['Привітання','Дані','Вступ','Завд. 1','Завд. 2','Завд. 3','Завд. 4','Завд. 5','Завд. 6','Завд. 7','Завд. 8','Завд. 9','Завд. 10','Завд. 11','Завд. 12','Завд. 13','Завд. 14','Завд. 15','Завд. 16','Завд. 17','Завд. 18','Запитання','Результат'];
+const TOTAL = 23;
+
+/* ═══ STATE ═══ */
+const st = {
+  name:'', age:null, date:'',
+  r:{
+    alg1:0, alg2:0, alg3:0, alg4:0,   // algorithmic
+    sp1:0, sp2:0, sp3:0,               // spatial
+    vis1:0, vis2:0, vis3:0,            // visual
+    str1:0, str2:0, str3:0, str4:0,   // structural
+    cre1:0, cre2:0, cre3:0,           // creative
+    seq:0                              // sequence
+  },
+  lk:{},
+  // task states
+  t1done:false, t1sel:null,
+  t2done:false, t2sel:null, t2reasons:[],
+  t3done:false,
+  t4done:false,
+  t5done:false, chasmSel:[],
+  t6done:false, storyRemoved:null, storyOrder:[], storyMode:'remove',
+  t7done:false, t7bugRunning:false, t7fixed:false,
+  t8done:false,
+  t9done:false, t9sel:null, t9reasons:[],
+  t10done:false, t10sel:null, t10reasons:[],
+  t11done:false,
+  t12done:false, t12bDone:false,
+  t13done:false, appSel:[],
+  t14done:false,
+  t15done:false,
+  t16done:false,
+  t17done:false,
+  t18done:false, levelSel:[],
+  fq1:null, fq2:[],
+  _algoP:0, _spatP:0, _visP:0, _strP:0, _creP:0, _seqP:0,
+  itR:0, vcR:0, ptR:0,
+  mainC:null, altC:null
+};
+
+const ARR = {U:'↑',D:'↓',L:'←',R:'→'};
+const FIX7 = 'R'; const FIX7_IDX = 6;
+const PROG7 = ['D','D','D','D','R','R','U','R']; // U at idx 6 leads to wall [4,4], fix = R
+
+/* ═══ NAV ═══ */
+function autoScore(){
+  try{
+    const cur=document.querySelector('.screen.active');if(!cur)return;const id=cur.id;
+    if(id==='s8'&&!st.t6done&&st.storyRemoved){checkStory(true);}
+    if(id==='s7'&&!st.t5done&&st.chasmSel.length>0){checkChasm(true);}
+    if(id==='s15'&&!st.t13done&&st.appSel.length>0){checkApp(true);}
+    if(id==='s20'&&!st.t18done&&st.levelSel.length>0){checkLevel(true);}
+  }catch(e){console.warn(e.message);}
+}
+function go(n){
+  autoScore();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  window.scrollTo(0,0);
+  if(n===8&&!st.t6done){resetStory();}
+  document.getElementById('pbFill').style.width=Math.round(n/(TOTAL-1)*100)+'%';
+  document.getElementById('pbLbl').textContent=SNAMES[n]||'';
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function showFB(id,t,m){const e=document.getElementById(id);if(!e)return;e.className='fb on '+t;e.textContent=m}
+function hideFB(id){const e=document.getElementById(id);if(e)e.className='fb'}
+function fmtDate(d){if(!d)return'';const[y,m,dd]=d.split('-');return dd+'.'+m+'.'+y}
+function confirmRestart(){if(confirm('Почати спочатку? Всі відповіді буде скинуто.'))location.reload()}
+function score3(att){return att<=1?3:att===2?2:1}
+function skipConfirm(n){
+  const box=document.querySelector('.screen.active .skip-box');
+  if(!box){if(confirm('Пропустити це завдання?'))go(n);}
+  else{if(box.classList.contains('on')){go(n);}else{box.classList.add('on');}}
+}
+
+/* ═══ START ═══ */
+function pickAge(a,el){st.age=a;document.querySelectorAll('[data-age]').forEach(c=>c.classList.remove('sel'));el.classList.add('sel')}
+function startDiag(){
+  const n=document.getElementById('inp-name').value.trim();let ok=true;
+  if(!n){document.getElementById('err-name').classList.add('on');ok=false;}else document.getElementById('err-name').classList.remove('on');
+  if(!st.age){document.getElementById('err-age').classList.add('on');ok=false;}else document.getElementById('err-age').classList.remove('on');
+  if(!ok)return;
+  st.date=document.getElementById('inp-date').value||new Date().toISOString().split('T')[0];
+  st.name=n;document.getElementById('intro-name').textContent=n;go(1);
+}
+
+/* ═══════════ T1 — DRONE ROUTE ═══════════ */
+const DRONE_GRID = {
+  sz:5, robot:[1,1], parcel:[3,3], delivery:[5,5],
+  walls:[[2,2],[4,2],[2,4],[3,5]]
+};
+// Correct path: right,right,down,down,right,right,down,down (pick parcel at [3,3] then reach [5,5])
+const DRONE_SEQS = [
+  {label:'А', arrows:['→','→','↓','↓','→','→','↓','↓'], ok:false},
+  {label:'Б', arrows:['↓','↓','→','→','↓','→','→','↓'], ok:true},
+  {label:'В', arrows:['→','↓','→','↓','→','→','↓','↓'], ok:false},
+];
+function buildDroneGrid(){
+  const g=document.getElementById('drone-grid');g.innerHTML='';
+  const d=DRONE_GRID;
+  for(let r=1;r<=d.sz;r++)for(let c=1;c<=d.sz;c++){
+    const cell=document.createElement('div');cell.className='cell';cell.id='dg-'+r+'-'+c;
+    if(r===d.robot[0]&&c===d.robot[1])cell.textContent='🚁';
+    else if(r===d.parcel[0]&&c===d.parcel[1])cell.textContent='📦';
+    else if(r===d.delivery[0]&&c===d.delivery[1])cell.textContent='🏠';
+    else if(d.walls.some(w=>w[0]===r&&w[1]===c)){cell.classList.add('wall');cell.textContent='🚧';}
+    g.appendChild(cell);
+  }
+}
+function buildDroneOpts(){
+  const w=document.getElementById('drone-opts');w.innerHTML='';
+  DRONE_SEQS.forEach(s=>{
+    const d=document.createElement('div');d.className='arrow-opt';
+    d.innerHTML='<strong style="font-size:13px;margin-right:8px">'+s.label+':</strong>'+s.arrows.join(' ');
+    d.onclick=()=>checkDrone(s,d);w.appendChild(d);
+  });
+}
+let t1att=0;
+function checkDrone(opt,el){
+  if(st.t1done)return;t1att++;
+  document.querySelectorAll('#drone-opts .arrow-opt').forEach(e=>e.classList.remove('sel','ok','bad'));
+  if(opt.ok){
+    el.classList.add('ok');showFB('fb-t1','ok','✅ Правильно! Дрон підбирає посилку і доставляє її за адресою.');
+    if(!st.lk.t1){st.r.alg1=score3(t1att);st.lk.t1=true;}st.t1done=true;
+  } else {
+    showFB('fb-t1','warn','🤔 Маршрут не спрацює — дрон спочатку має забрати посилку 📦');
+  }
+}
+
+/* ═══════════ T2 — POSTER ═══════════ */
+const POSTERS = [
+  {
+    id:'A', label:'Варіант А', ok:false,
+    desc:'Яскраві кольори, але занадто багато конкуруючих деталей — погляд не знає, де зупинитися.',
+    bg:'#1a1a2e', accent:'#e94560',
+    svgContent:`<rect width="100%" height="100%" fill="#1a1a2e"/><circle cx="60%" cy="40%" r="35%" fill="#e94560" opacity=".18"/><text x="50%" y="20%" fill="#e94560" font-size="9" text-anchor="middle" font-family="sans-serif" font-weight="bold">★ ФЕСТИВАЛЬ ★</text><text x="50%" y="35%" fill="#fff" font-size="14" text-anchor="middle" font-family="sans-serif" font-weight="bold">MUSIC FEST</text><text x="50%" y="50%" fill="#e94560" font-size="8" text-anchor="middle" font-family="sans-serif">21 КВІТНЯ · 22 КВІТНЯ · 23 КВІТНЯ</text><text x="50%" y="62%" fill="#aaa" font-size="7" text-anchor="middle" font-family="sans-serif">10 СЦЕН · 80 АРТИСТІВ · ФУДКОРТ</text><rect x="20%" y="68%" width="60%" height="2%" fill="#e94560"/><text x="50%" y="78%" fill="#fff" font-size="7" text-anchor="middle" font-family="sans-serif">КВИТКИ: festival.ua · +38 000 000 0000</text><text x="50%" y="88%" fill="#e94560" font-size="7" text-anchor="middle" font-family="sans-serif">INSTAGRAM · FACEBOOK · TELEGRAM · TIK-TOK</text>`
+  },
+  {
+    id:'B', label:'Варіант Б', ok:true,
+    desc:'Збалансована композиція: чіткий заголовок, помітна дата і зрозуміла кнопка дії.',
+    bg:'#0f2d4a', accent:'#fec830',
+    svgContent:`<rect width="100%" height="100%" fill="#0f2d4a"/><rect x="0" y="0" width="100%" height="55%" fill="#fec830" opacity=".12" rx="0"/><text x="50%" y="28%" fill="#fec830" font-size="28" text-anchor="middle" font-family="sans-serif" font-weight="bold">🎵</text><text x="50%" y="46%" fill="#fff" font-size="16" text-anchor="middle" font-family="sans-serif" font-weight="bold">MUSIC FEST</text><text x="50%" y="58%" fill="#fec830" font-size="9" text-anchor="middle" font-family="sans-serif" font-weight="bold">21–23 КВІТНЯ</text><rect x="25%" y="66%" width="50%" height="14%" fill="#fec830" rx="6"/><text x="50%" y="76%" fill="#0f2d4a" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold">Купити квиток</text>`
+  },
+  {
+    id:'C', label:'Варіант В', ok:false,
+    desc:'Цікава ілюстрація, але заголовок трохи губиться — не одразу зрозуміло, що відбувається.',
+    bg:'#f0e8d8', accent:'#6b4c1e',
+    svgContent:`<rect width="100%" height="100%" fill="#f0e8d8"/><ellipse cx="50%" cy="35%" rx="35%" ry="30%" fill="#d4a96a" opacity=".4"/><text x="50%" y="30%" fill="#6b4c1e" font-size="22" text-anchor="middle" font-family="sans-serif">🎸🥁🎹</text><text x="50%" y="48%" fill="#6b4c1e" font-size="10" text-anchor="middle" font-family="sans-serif" font-weight="bold">Музичний фестиваль</text><text x="50%" y="62%" fill="#8a6330" font-size="8" text-anchor="middle" font-family="sans-serif">21–23 квітня, м. Київ</text><text x="50%" y="80%" fill="#6b4c1e" font-size="7" text-anchor="middle" font-family="sans-serif">festival.ua</text>`
+  }
+];
+const POSTER_REASONS = [
+  {id:'r1', text:'Чіткий заголовок — одразу видно назву події', ok:true},
+  {id:'r2', text:'Помітна дата — легко запам\'ятати', ok:true},
+  {id:'r3', text:'Є чітка кнопка або заклик до дії', ok:true},
+  {id:'r4', text:'Великий шрифт, але погано читається', ok:false},
+  {id:'r5', text:'Гарна ілюстрація займає весь простір', ok:false},
+  {id:'r6', text:'Забагато деталей — очей не знає куди дивитись', ok:false},
+];
+let posterReasonsSel=[];
+function buildPosters(){
+  const w=document.getElementById('poster-opts');w.innerHTML='';
+  POSTERS.forEach(p=>{
+    const d=document.createElement('div');d.className='cov';
+    d.innerHTML=`<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" style="min-height:180px">${p.svgContent}</svg><div class="cov-lbl">${p.label}</div>`;
+    d.onclick=()=>checkPoster(p,d);w.appendChild(d);
+  });
+}
+let t2att=0;
+function checkPoster(p,el){
+  if(st.t2done)return;t2att++;
+  document.querySelectorAll('#poster-opts .cov').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  // Record silently — no right/wrong shown
+  if(!st.lk.t2){st.r.vis1=p.ok?score3(t2att):0;st.lk.t2=true;}
+  st.t2sel=p.id;
+  // Always show follow-up reasons regardless of choice
+  document.getElementById('poster-reason-wrap').style.display='block';
+  buildPosterReasons();
+}
+function buildPosterReasons(){
+  const w=document.getElementById('poster-reasons');w.innerHTML='';posterReasonsSel=[];
+  POSTER_REASONS.forEach(r=>{
+    const d=document.createElement('div');d.className='chk-card';
+    d.innerHTML=`<div class="chkb" id="prr-${r.id}"></div>${r.text}`;
+    d.onclick=()=>{
+      // No lock, no feedback — just record selection freely
+      const i=posterReasonsSel.indexOf(r.id);
+      if(i>-1) posterReasonsSel.splice(i,1);
+      else posterReasonsSel.push(r.id);
+      d.classList.toggle('chk', posterReasonsSel.includes(r.id));
+      const el=document.getElementById('prr-'+r.id);
+      if(el) el.textContent=posterReasonsSel.includes(r.id)?'✓':'';
+      // Silently update score as child selects — МІК sees result, child sees nothing
+      const okSel=posterReasonsSel.filter(id=>POSTER_REASONS.find(x=>x.id===id&&x.ok));
+      const sc=okSel.length>=3?1:okSel.length>=2?0.5:0;
+      if(!st.lk.t2r_first){st.r.vis1=Math.min(3,(st.r.vis1||0)+sc);st.lk.t2r_first=true;}
+      else{st.r.vis1=Math.min(3,(st.r.vis1_base||0)+sc);}
+    };w.appendChild(d);
+  });
+  // Store base score to allow recalculation as selection changes
+  st.vis1_base=st.r.vis1||0;
+}
+
+/* ═══════════ T3 — ROTATION ═══════════ */
+const ROT_ORIG = [[0,1,1],[1,1,0],[1,0,0]]; // L-like shape
+function rotate90CW(grid){
+  const rows=grid.length,cols=grid[0].length;
+  const res=Array.from({length:cols},()=>Array(rows).fill(0));
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)res[c][rows-1-r]=grid[r][c];
+  return res;
+}
+function mirror(grid){return grid.map(r=>[...r].reverse());}
+const ROT_CORRECT=rotate90CW(ROT_ORIG);
+// 4 clearly distinct options for rotation task
+const ROT_270=rotate90CW(rotate90CW(rotate90CW(ROT_ORIG))); // 270° = wrong direction
+const ROT_180=rotate90CW(rotate90CW(ROT_ORIG));
+const ROT_OPTS=[
+  {grid:ROT_CORRECT,ok:true},             // correct: 90° CW
+  {grid:mirror(ROT_CORRECT),ok:false},    // mirrored correct
+  {grid:ROT_270,ok:false},               // 270° CW (=90° CCW)
+  {grid:ROT_180,ok:false},               // 180°
+];
+function renderShape(grid,size=28,colorOn='#1C3BA4',colorOff='#F6F6F8'){
+  const rows=grid.length,cols=grid[0].length;
+  let svg=`<svg viewBox="0 0 ${cols*size+cols*3} ${rows*size+rows*3}" xmlns="http://www.w3.org/2000/svg">`;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const x=c*(size+3),y=r*(size+3);
+    svg+=`<rect x="${x}" y="${y}" width="${size}" height="${size}" rx="5" fill="${grid[r][c]?colorOn:colorOff}" stroke="${grid[r][c]?'#111E6C':'#DCDCE4'}" stroke-width="1.5"/>`;
+  }
+  return svg+'</svg>';
+}
+function buildRotation(){
+  document.getElementById('rot-orig').innerHTML=renderShape(ROT_ORIG,34);
+  const w=document.getElementById('rot-opts');w.innerHTML='';
+  ['А','Б','В','Г'].forEach((lbl,i)=>{
+    const d=document.createElement('div');d.className='cc';d.style.cssText='padding:16px;min-height:120px;';
+    d.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">Варіант ${lbl}</div>${renderShape(ROT_OPTS[i].grid,30)}`;
+    d.onclick=()=>checkRotation(ROT_OPTS[i],d);w.appendChild(d);
+  });
+}
+let t3att=0;
+function checkRotation(opt,el){
+  if(st.t3done)return;t3att++;
+  document.querySelectorAll('#rot-opts .cc').forEach(e=>e.classList.remove('sel','ok','bad'));
+  if(opt.ok){el.classList.add('ok');showFB('fb-t3','ok','✅ Правильно!');if(!st.lk.t3){st.r.sp1=score3(t3att);st.lk.t3=true;}st.t3done=true;}
+  else{showFB('fb-t3','warn','🤔 Не зовсім — спробуй уявити поворот по кроках 🔄');}
+}
+
+/* ═══════════ T4 — PAGE STRUCTURE ═══════════ */
+const PAGE_STRUCTS = [
+  {id:'A',items:['Назва проєкту','Короткий опис','Переваги','Кнопка реєстрації','Відгуки','Контакти'],ok:true},
+  {id:'B',items:['Контакти','Відгуки','Назва проєкту','Переваги','Короткий опис','Кнопка реєстрації'],ok:false},
+  {id:'C',items:['Кнопка реєстрації','Назва проєкту','Переваги','Контакти','Відгуки','Короткий опис'],ok:false},
+];
+function buildPageStruct(){
+  const w=document.getElementById('page-struct-opts');w.innerHTML='';
+  const colors=['#E8F4FD','#FFF8E1','#F3E8FF'];
+  const borders=['#90CAF9','#FFD54F','#CE93D8'];
+  PAGE_STRUCTS.forEach((s,si)=>{
+    const d=document.createElement('div');
+    d.style.cssText=`border:2.5px solid ${borders[si]};border-radius:14px;padding:16px 20px;cursor:pointer;background:${colors[si]};transition:all .2s;margin-bottom:10px;`;
+    d.innerHTML='<div style="font-size:13px;font-weight:800;color:var(--navy);margin-bottom:10px;font-family:\'IBM Plex Mono\',monospace;letter-spacing:.5px">ВАРІАНТ '+s.id+'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:6px">'
+      +s.items.map((it,i)=>`<span style="display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid ${borders[si]};border-radius:8px;padding:5px 10px;font-size:13px;font-weight:600"><span style="font-size:11px;font-weight:800;color:var(--navy)">${'①②③④⑤⑥'[i]}</span>${it}</span>`).join('')
+      +'</div>';
+    d.onmouseover=()=>{if(!d.classList.contains('ok')&&!d.classList.contains('bad'))d.style.transform='translateY(-2px)';d.style.boxShadow='0 4px 16px rgba(0,0,0,.1)';};
+    d.onmouseout=()=>{d.style.transform='';d.style.boxShadow='';};
+    d.onclick=()=>checkPageStruct(s,d);w.appendChild(d);
+  });
+}
+let t4att=0;
+function checkPageStruct(s,el){
+  if(st.t4done)return;t4att++;
+  document.querySelectorAll('#page-struct-opts .arrow-opt').forEach(e=>e.classList.remove('sel','ok','bad'));
+  if(s.ok){el.classList.add('ok');showFB('fb-t4','ok','✅ Правильно! Такий порядок допомагає відвідувачу одразу зрозуміти суть і діяти.');if(!st.lk.t4){st.r.str1=score3(t4att);st.r.seq=Math.min(3,(st.r.seq||0)+0.5);st.lk.t4=true;}st.t4done=true;}
+  else{showFB('fb-t4','warn','🤔 Подумай — яка інформація найважливіша на початку сторінки? 💡');}
+}
+
+/* ═══════════ T5 — CHASM ═══════════ */
+const CHASM_ITEMS=[
+  {id:'bridge',ic:'🪵',label:'Скласти міст із блоків',ok:true},
+  {id:'jetpack',ic:'🚀',label:'Використати реактивний ранець',ok:true},
+  {id:'rope',ic:'🪢',label:'Натягнути мотузку',ok:true},
+  {id:'teleport',ic:'✨',label:'Відкрити телепорт',ok:true},
+  {id:'torch',ic:'🔦',label:'Увімкнути ліхтарик',ok:false},
+  {id:'headphones',ic:'🎧',label:'Вдягнути навушники',ok:false},
+  {id:'map',ic:'🗺️',label:'Намалювати карту',ok:false},
+  {id:'pillow',ic:'🛏️',label:'Взяти подушку',ok:false},
+];
+function buildChasm(){
+  const w=document.getElementById('chasm-opts');w.innerHTML='';
+  CHASM_ITEMS.forEach(it=>{
+    const d=document.createElement('div');d.className='cc';d.innerHTML=`<span class="ic">${it.ic}</span>${it.label}`;
+    d.onclick=()=>togChasm(it,d);w.appendChild(d);
+  });
+}
+function togChasm(it,el){
+  if(st.t5done)return;
+  const i=st.chasmSel.indexOf(it.id);
+  if(i>-1){st.chasmSel.splice(i,1);el.classList.remove('sel');}
+  else if(st.chasmSel.length<3){st.chasmSel.push(it.id);el.classList.add('sel');}
+  document.getElementById('chasm-cnt').textContent='Обрано: '+st.chasmSel.length+' / 3';
+  if(st.chasmSel.length===3)checkChasm(false);
+}
+function checkChasm(silent=false){
+  if(st.t5done)return;
+  const ok=CHASM_ITEMS.filter(i=>i.ok).map(i=>i.id);
+  const correct=st.chasmSel.filter(s=>ok.includes(s)).length;
+  let sc=0;if(correct===3)sc=1;else if(correct>=2)sc=0.5;
+  if(!st.lk.t5){st.r.cre1=sc;st.lk.t5=true;}st.t5done=true;
+  // No feedback shown — МІК records internally
+}
+
+/* ═══════════ T6 — STORY ═══════════ */
+const STORY_ITEMS=[
+  {id:'road',order:4,extra:false,ic:'🚶',label:'Вирушає в дорогу'},
+  {id:'icecream',order:null,extra:true,ic:'🍦',label:'Купує морозиво в кафе'},
+  {id:'portal',order:5,extra:false,ic:'🌀',label:'Знаходить портал'},
+  {id:'msg',order:1,extra:false,ic:'📩',label:'Отримує повідомлення з координатами'},
+  {id:'map',order:2,extra:false,ic:'🗺️',label:'Відкриває карту'},
+  {id:'pack',order:3,extra:false,ic:'🎒',label:'Збирає спорядження'},
+];
+function buildStoryCards(){
+  const sc=document.getElementById('story-cards');
+  const sd=document.getElementById('story-drop');
+  sc.innerHTML='';sd.innerHTML='';st.storyMode='remove';st.storyRemoved=null;st.storyOrder=[];
+  STORY_ITEMS.forEach(it=>{
+    const d=document.createElement('div');d.className='story-card';d.id='sc-'+it.id;
+    d.innerHTML=`<div class="si">${it.ic}</div>${it.label}`;
+    d.onclick=()=>storyCardClick(it,d);sc.appendChild(d);
+  });
+  for(let i=1;i<=5;i++){const s=document.createElement('div');s.className='story-slot';s.id='ss-'+i;s.textContent=i+'.';s.onclick=()=>storySlotClick(i);sd.appendChild(s);}
+}
+function storyCardClick(it,el){
+  if(st.t6done)return;
+  if(st.storyMode==='remove'){
+    if(st.storyRemoved){document.getElementById('sc-'+st.storyRemoved).classList.remove('sel');document.getElementById('sc-'+st.storyRemoved).style.opacity='1';}
+    st.storyRemoved=it.id;el.classList.add('sel');el.style.opacity='.4';
+    st.storyMode='order';
+  } else {
+    if(it.id===st.storyRemoved)return;
+    if(st.storyOrder.includes(it.id)){st.storyOrder=st.storyOrder.filter(x=>x!==it.id);el.classList.remove('sel');const pos=st.storyOrder.length+1;const sl=document.getElementById('ss-'+(pos));if(sl){sl.className='story-slot';sl.textContent=pos+'.';}}
+    else if(st.storyOrder.length<5){
+      const pos=st.storyOrder.length+1;st.storyOrder.push(it.id);el.classList.add('sel');
+      const sl=document.getElementById('ss-'+pos);if(sl){sl.className='story-slot filled';sl.textContent=it.ic+' '+it.label;}
+      if(st.storyOrder.length===5){checkStory(false);}
+    }
+  }
+}
+function storySlotClick(n){
+  if(st.t6done||st.storyOrder.length===0)return;
+  const lastId=st.storyOrder[st.storyOrder.length-1];st.storyOrder.pop();
+  const el=document.getElementById('sc-'+lastId);if(el)el.classList.remove('sel');
+  const sl=document.getElementById('ss-'+n);if(sl){sl.className='story-slot';sl.textContent=n+'.';}
+}
+function resetStory(){st.storyMode='remove';st.storyRemoved=null;st.storyOrder=[];buildStoryCards();hideFB('fb-t6');}
+function checkStory(silent=false){
+  if(st.t6done)return;
+  if(!st.storyRemoved&&!silent)return;
+  if(!silent&&st.storyOrder.length!==5){showFB('fb-t6','warn','Розстав усі 5 картинок.');return;}
+  st.t6done=true;
+  const removedCorrect=STORY_ITEMS.find(x=>x.id===st.storyRemoved)?.extra===true;
+  const orderCorrect=st.storyOrder.length>=3&&st.storyOrder.every((id,i)=>STORY_ITEMS.find(x=>x.id===id)?.order===i+1);
+  let sc=0;if(removedCorrect&&orderCorrect)sc=2;else if(removedCorrect||orderCorrect)sc=1;
+  st.r.seq=Math.max(st.r.seq,sc);if(!st.lk.t6){st.r.seq=sc;st.lk.t6=true;}
+  if(!silent){if(sc===2)showFB('fb-t6','ok','🏆 Чудово! Зайву картинку знайдено і порядок правильний.');else if(removedCorrect)showFB('fb-t6','ok','✅ Зайву картинку знайдено правильно. Порядок можна покращити.');else showFB('fb-t6','warn','🤔 Перевір: яка картинка точно не стосується цієї пригоди?');}
+}
+
+/* ═══════════ T7 — FIX DRONE ═══════════ */
+function buildFixGrid(){
+  const g=document.getElementById('fix-grid');g.innerHTML='';
+  // 5x5, drone at [1,1], delivery at [5,5], walls
+  const walls=[[2,3],[1,3],[4,4]];
+  for(let r=1;r<=5;r++)for(let c=1;c<=5;c++){
+    const d=document.createElement('div');d.className='cell';d.id='fg-'+r+'-'+c;
+    if(r===1&&c===1)d.textContent='🚁';
+    else if(r===5&&c===5)d.textContent='🏠';
+    else if(walls.some(w=>w[0]===r&&w[1]===c)){d.classList.add('wall');d.textContent='🚧';}
+    g.appendChild(d);
+  }
+}
+function buildProgSeq7(){
+  const w=document.getElementById('prog-seq7');w.innerHTML='';
+  PROG7.forEach((cmd,i)=>{
+    const b=document.createElement('div');b.className='prog-cmd';b.id='ps7-'+i;b.textContent=ARR[cmd];
+    b.onclick=()=>selBug7(i);w.appendChild(b);
+  });
+}
+let t7selIdx=null,t7att=0;
+function selBug7(idx){
+  if(st.t7fixed)return;t7selIdx=idx;
+  document.querySelectorAll('#prog-seq7 .prog-cmd').forEach((e,i)=>e.classList.toggle('sel-err',i===idx));
+  document.getElementById('rep7-wrap').style.display='block';
+  document.getElementById('t7-hint').style.display='none';
+  buildRepOpts7(idx);
+}
+function buildRepOpts7(errIdx){
+  const w=document.getElementById('rep7-opts');w.innerHTML='';
+  ['U','D','L','R'].forEach(cmd=>{
+    if(cmd===PROG7[errIdx])return;
+    const b=document.createElement('div');b.className='rep-btn';b.textContent=ARR[cmd];b.onclick=()=>applyFix7(errIdx,cmd);w.appendChild(b);
+  });
+}
+async function applyFix7(errIdx,newCmd){
+  if(st.t7fixed)return;t7att++;
+  if(!st.lk.t7){}
+  if(errIdx===FIX7_IDX&&newCmd===FIX7){
+    document.getElementById('ps7-'+errIdx).textContent=ARR[newCmd];
+    document.getElementById('ps7-'+errIdx).className='prog-cmd fixed';
+    document.getElementById('rep7-wrap').style.display='none';
+    st.t7fixed=true;
+    if(!st.lk.t7){st.r.alg2=score3(t7att);st.lk.t7=true;}
+    await runFixed7();
+  } else showFB('fb-t7','warn','🤔 Маршрут ще не спрацює. Спробуй іншу команду або іншу позицію.');
+}
+async function showBugAnim7(){
+  if(st.t7bugRunning)return;st.t7bugRunning=true;
+  buildFixGrid();hideFB('fb-t7');
+  const walls=[[2,3],[1,3],[4,4]];
+  let pos=[1,1];
+  for(let i=0;i<PROG7.length;i++){
+    const cmd=PROG7[i];
+    document.querySelectorAll('#prog-seq7 .prog-cmd').forEach((e,j)=>e.classList.toggle('running',j===i));
+    const[nr,nc]=[pos[0]+(cmd==='D'?1:cmd==='U'?-1:0),pos[1]+(cmd==='R'?1:cmd==='L'?-1:0)];
+    if(nr<1||nr>5||nc<1||nc>5){document.getElementById('fg-'+pos[0]+'-'+pos[1]).className='cell fail';document.getElementById('fg-'+pos[0]+'-'+pos[1]).textContent='🚁';document.querySelectorAll('#prog-seq7 .prog-cmd').forEach((e,j)=>e.classList.toggle('sel-err',j===i));showFB('fb-t7','warn','🤔 Ця команда виходить за межі — натисни на неї 🔍');st.t7bugRunning=false;return;}
+    if(walls.some(w=>w[0]===nr&&w[1]===nc)){const ce=document.getElementById('fg-'+pos[0]+'-'+pos[1]);if(ce){ce.className='cell fail';ce.textContent='🚁';}const we=document.getElementById('fg-'+nr+'-'+nc);if(we){we.className='cell fail';we.textContent='💥';}document.querySelectorAll('#prog-seq7 .prog-cmd').forEach((e,j)=>e.classList.toggle('sel-err',j===i));showFB('fb-t7','warn','💥 Ось де помилка! Команда №'+(i+1)+' «'+ARR[PROG7[i]]+'» веде на перешкоду. Натисни на неї.');st.t7bugRunning=false;return;}
+    const prev=document.getElementById('fg-'+pos[0]+'-'+pos[1]);if(prev)prev.className='cell';
+    pos=[nr,nc];const cur=document.getElementById('fg-'+nr+'-'+nc);if(cur){cur.className='cell anim';cur.textContent='🚁';}
+    await sleep(400);
+    if(nr===5&&nc===5)break;
+  }
+  document.querySelectorAll('#prog-seq7 .prog-cmd').forEach(e=>e.classList.remove('running'));
+  st.t7bugRunning=false;
+}
+async function runFixed7(){
+  buildFixGrid();
+  const walls=[[2,3],[1,3],[4,4]];
+  const seq=[...PROG7];seq[FIX7_IDX]=FIX7;let pos=[1,1];
+  for(let i=0;i<seq.length;i++){
+    const cmd=seq[i];const[nr,nc]=[pos[0]+(cmd==='D'?1:cmd==='U'?-1:0),pos[1]+(cmd==='R'?1:cmd==='L'?-1:0)];
+    if(nr<1||nr>5||nc<1||nc>5)break;if(walls.some(w=>w[0]===nr&&w[1]===nc))break;
+    const prev=document.getElementById('fg-'+pos[0]+'-'+pos[1]);if(prev)prev.className='cell';
+    pos=[nr,nc];const cur=document.getElementById('fg-'+nr+'-'+nc);if(cur){cur.className='cell anim';cur.textContent='🚁';}
+    await sleep(360);
+    if(nr===5&&nc===5){if(cur){cur.className='cell done';cur.textContent='🎉';}showFB('fb-t7','ok','✅ Програму виправлено! Дрон доставив посилку.');return;}
+  }
+}
+
+/* ═══════════ T8 — TOP VIEW ═══════════ */
+const TOWER = [3,1,2,4,1]; // heights for each column
+function buildTower(){
+  const w=document.getElementById('tower-side');w.innerHTML='';
+  TOWER.forEach(h=>{
+    const col=document.createElement('div');col.style.cssText='display:flex;flex-direction:column-reverse;gap:3px;';
+    for(let i=0;i<h;i++){
+      const cube=document.createElement('div');
+      cube.style.cssText=`width:44px;height:44px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;border:2px solid;`;
+      if(i===h-1){cube.style.background='#C7D2FE';cube.style.borderColor='var(--navy)';cube.textContent=h;}
+      else{cube.style.background='#dde4ff';cube.style.borderColor='#a5b4fc';}
+      col.appendChild(cube);
+    }
+    w.appendChild(col);
+  });
+}
+// Top view: which columns have cubes — all 5 columns have at least 1.
+// Top view looks like [3,1,2,4,1] — all filled, color by height
+function buildTowerOpts(){
+  const w=document.getElementById('tower-opts');w.innerHTML='';
+  // TOWER=[3,1,2,4,1] — 5 columns in a row.
+  // Top view: each column = 1 square. But to make it interesting as a 2D spatial puzzle,
+  // show a 2-row arrangement where each option differs in shape/occupancy.
+  // Correct: all 5 squares occupied in a single row (1×5 strip)
+  // Wrong variants: different 2D arrangements with gaps or wrong shapes
+  
+  // We represent top view as a small 2D SVG grid (3 rows × 5 cols)
+  // TOWER columns are positioned side by side — top view = 1 row of 5 filled squares
+  // Distractors: L-shapes, T-shapes, or row with gap
+  function makeSVG(cells, label){
+    const sz=28, gap=3, cols=5, rows=3;
+    const W=cols*(sz+gap), H=rows*(sz+gap);
+    let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block">`;
+    for(let r=0;r<rows;r++) for(let col=0;col<cols;col++){
+      const x=col*(sz+gap), y=r*(sz+gap);
+      const filled=cells.some(([cr,cc])=>cr===r&&cc===col);
+      svg+=`<rect x="${x}" y="${y}" width="${sz}" height="${sz}" rx="5" fill="${filled?"#3b82f6":"#e8eeff"}" stroke="${filled?"#1d4ed8":"#c7d2fe"}" stroke-width="1.5"/>`;
+      if(filled) svg+=`<rect x="${x+4}" y="${y+4}" width="${sz-8}" height="${sz-8}" rx="3" fill="rgba(255,255,255,.25)"/>`;
+    }
+    svg+="</svg>";
+    return svg;
+  }
+  
+  const opts=[
+    // Correct: bottom row fully filled (columns viewed from above = 1 row × 5)
+    {label:'А', cells:[[2,0],[2,1],[2,2],[2,3],[2,4]], ok:true},
+    // Wrong: L-shape
+    {label:'Б', cells:[[0,0],[1,0],[2,0],[2,1],[2,2]], ok:false},
+    // Wrong: T-shape
+    {label:'В', cells:[[0,2],[1,2],[2,0],[2,1],[2,2],[2,3],[2,4]], ok:false},
+    // Wrong: row with gap (missing 3rd column)
+    {label:'Г', cells:[[2,0],[2,1],[2,3],[2,4]], ok:false},
+  ];
+  opts.forEach(o=>{
+    const d=document.createElement('div');d.className='cc';d.style.cssText='padding:16px 12px;gap:10px;min-height:120px;';
+    d.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--muted)">Варіант ${o.label}</div>${makeSVG(o.cells,o.label)}<div style="font-size:10px;color:var(--muted)">вид зверху</div>`;
+    d.onclick=()=>checkTower(o,d);w.appendChild(d);
+  });
+}
+let t8att=0;
+function checkTower(o,el){
+  if(st.t8done)return;t8att++;
+  document.querySelectorAll('#tower-opts .cc').forEach(e=>e.classList.remove('sel','ok','bad'));
+  if(o.ok){el.classList.add('ok');showFB('fb-t8','ok','✅ Правильно! Зверху видно всі 5 стопок із правильними висотами.');if(!st.lk.t8){st.r.sp2=score3(t8att);st.lk.t8=true;}st.t8done=true;}
+  else{showFB('fb-t8','warn','🤔 Не зовсім — уяви, що дивишся прямо зверху на кожну стопку 👀');}
+}
+
+/* ═══════════ T9 — OCEAN STYLE ═══════════ */
+const OCEAN_OPTS=[
+  {id:'A',label:'Варіант А',ok:true,
+   // Light, calm, friendly ocean — atmosphere only, NO TEXT
+   svgContent:`<rect width="240" height="170" fill="#b8e8f5"/>
+<ellipse cx="120" cy="170" rx="140" ry="60" fill="#7ecce8" opacity=".7"/>
+<ellipse cx="120" cy="155" rx="110" ry="45" fill="#5dbcd6" opacity=".5"/>
+<circle cx="55" cy="120" r="22" fill="#f9cc50" opacity=".8"/>
+<circle cx="55" cy="120" r="14" fill="#f9a825" opacity=".9"/>
+<ellipse cx="160" cy="105" rx="20" ry="12" fill="#80cbc4" opacity=".8"/>
+<ellipse cx="100" cy="115" rx="15" ry="9" fill="#4db6ac" opacity=".7"/>
+<circle cx="75" cy="145" r="5" fill="#fff" opacity=".7"/>
+<circle cx="92" cy="138" r="4" fill="#fff" opacity=".6"/>
+<circle cx="140" cy="148" r="6" fill="#fff" opacity=".65"/>
+<circle cx="110" cy="132" r="3" fill="#fff" opacity=".5"/>
+<path d="M30,90 Q60,60 90,85 Q120,60 150,80 Q180,55 210,75" stroke="#4fc3f7" stroke-width="2" fill="none" opacity=".4"/>
+<ellipse cx="40" cy="70" rx="25" ry="18" fill="#e1f5fe" opacity=".6"/>
+<ellipse cx="170" cy="55" rx="30" ry="20" fill="#e1f5fe" opacity=".5"/>
+<ellipse cx="100" cy="45" rx="35" ry="22" fill="#fff" opacity=".4"/>`
+  },
+  {id:'B',label:'Варіант Б',ok:false,
+   // Dark, deep sea, threatening — atmosphere only
+   svgContent:`<rect width="240" height="170" fill="#020815"/>
+<ellipse cx="120" cy="170" rx="140" ry="50" fill="#001a2e" opacity=".9"/>
+<circle cx="120" cy="85" r="55" fill="#001529" opacity=".7"/>
+<circle cx="120" cy="85" r="38" fill="#002040" stroke="#00acc1" stroke-width="1.5" opacity=".6"/>
+<ellipse cx="85" cy="70" rx="8" ry="12" fill="#00bcd4" opacity=".7"/>
+<ellipse cx="155" cy="75" rx="8" ry="12" fill="#00bcd4" opacity=".7"/>
+<path d="M100,95 Q120,105 140,95" stroke="#00acc1" stroke-width="2" fill="none" opacity=".6"/>
+<circle cx="40" cy="40" r="3" fill="#00e5ff" opacity=".5"/>
+<circle cx="190" cy="30" r="2" fill="#00e5ff" opacity=".4"/>
+<circle cx="200" cy="130" r="4" fill="#00e5ff" opacity=".3"/>
+<circle cx="20" cy="120" r="3" fill="#00bcd4" opacity=".4"/>
+<path d="M0,140 Q30,120 60,135 Q90,115 120,130 Q150,110 180,125 Q210,108 240,120 L240,170 L0,170Z" fill="#001529" opacity=".8"/>`
+  },
+  {id:'C',label:'Варіант В',ok:false,
+   // Dynamic, sporty, competitive ocean — atmosphere only
+   svgContent:`<rect width="240" height="170" fill="#e3f2fd"/>
+<rect x="0" y="105" width="240" height="65" fill="#0d47a1"/>
+<polygon points="0,75 30,55 60,75 90,50 120,72 150,48 180,70 210,45 240,65 240,105 0,105" fill="#1565c0"/>
+<polygon points="0,88 40,68 80,85 120,62 160,80 200,58 240,75 240,105 0,105" fill="#1976d2" opacity=".7"/>
+<circle cx="48" cy="40" r="20" fill="#ef5350" opacity=".9"/>
+<circle cx="192" cy="35" r="16" fill="#ffb300" opacity=".9"/>
+<line x1="48" y1="20" x2="48" y2="58" stroke="#c62828" stroke-width="3"/>
+<line x1="192" y1="18" x2="192" y2="52" stroke="#e65100" stroke-width="3"/>
+<polygon points="48,20 72,28 48,36" fill="#fff" opacity=".9"/>
+<polygon points="192,18 172,26 192,34" fill="#fff" opacity=".9"/>`
+  },
+];
+const OCEAN_REASONS=[
+  {id:'r1',text:'Кольори передають спокійний та дружній настрій',ok:true},
+  {id:'r2',text:'Плавні форми підходять для гри-дослідження',ok:true},
+  {id:'r3',text:'Виглядає цікаво для дітей, не лякає',ok:true},
+  {id:'r4',text:'Темні кольори додають таємничості',ok:false},
+  {id:'r5',text:'Яскраві кольори підходять для гонок',ok:false},
+  {id:'r6',text:'Тривожний настрій робить гру захопливішою',ok:false},
+];
+let oceanReasonsSel=[];
+function buildOcean(){
+  const w=document.getElementById('ocean-opts');w.innerHTML='';
+  OCEAN_OPTS.forEach(o=>{
+    const d=document.createElement('div');d.className='cov';
+    d.innerHTML=`<svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" style="min-height:190px">${o.svgContent}</svg><div class="cov-lbl">${o.label}</div>`;
+    d.onclick=()=>checkOcean(o,d);w.appendChild(d);
+  });
+}
+let t9att=0;
+function checkOcean(o,el){
+  if(st.t9done)return;t9att++;
+  document.querySelectorAll('#ocean-opts .cov').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  // Record silently — no right/wrong shown
+  if(!st.lk.t9){st.r.vis2=o.ok?score3(t9att):0;st.lk.t9=true;}
+  st.t9sel=o.id;
+  document.getElementById('ocean-reason-wrap').style.display='block';buildOceanReasons();
+}
+function buildOceanReasons(){
+  const w=document.getElementById('ocean-reasons');w.innerHTML='';oceanReasonsSel=[];
+  OCEAN_REASONS.forEach(r=>{
+    const d=document.createElement('div');d.className='chk-card';
+    d.innerHTML=`<div class="chkb" id="ocr-${r.id}"></div>${r.text}`;
+    d.onclick=()=>{
+      if(st.t9done)return;
+      const i=oceanReasonsSel.indexOf(r.id);if(i>-1)oceanReasonsSel.splice(i,1);else oceanReasonsSel.push(r.id);
+      d.classList.toggle('chk',oceanReasonsSel.includes(r.id));
+      const el=document.getElementById('ocr-'+r.id);if(el)el.textContent=oceanReasonsSel.includes(r.id)?'✓':'';
+      // Record silently, no auto-close
+      if(!st.lk.t9r){
+        const okSel=oceanReasonsSel.filter(id=>OCEAN_REASONS.find(r=>r.id===id&&r.ok));
+        const sc=okSel.length>=3?1:okSel.length>=2?0.5:0;
+        st.r.vis2=Math.min(3,st.r.vis2+sc);st.lk.t9r=true;
+      }
+    };w.appendChild(d);
+  });
+}
+
+/* ═══════════ T10 — SITE SCREEN ═══════════ */
+const SITE_OPTS=[
+  {id:'A',label:'Варіант А',ok:false,
+   svgContent:`<rect width="200" height="140" fill="#fafafa"/><rect x="0" y="0" width="200" height="28" fill="#1C3BA4"/><text x="14" y="18" fill="#fff" font-size="8" font-family="sans-serif" font-weight="bold">MyProject</text><rect x="14" y="38" width="172" height="50" fill="#e0e0e0" rx="6"/><text x="100" y="67" fill="#999" font-size="8" text-anchor="middle" font-family="sans-serif">гарна ілюстрація</text><text x="14" y="105" fill="#333" font-size="7" font-family="sans-serif">Дізнатись більше ·  Умови · Про нас · FAQ · Контакти · Блог</text><text x="14" y="120" fill="#999" font-size="6" font-family="sans-serif">(кнопка реєстрації схована внизу)</text>`
+  },
+  {id:'B',label:'Варіант Б',ok:true,
+   svgContent:`<rect width="200" height="140" fill="#fff"/><rect x="0" y="0" width="200" height="26" fill="#111E6C"/><text x="14" y="17" fill="#FEC830" font-size="8" font-family="sans-serif" font-weight="bold">MyProject</text><text x="14" y="45" fill="#111" font-size="13" font-family="sans-serif" font-weight="bold">Навчайся з AI</text><text x="14" y="58" fill="#555" font-size="7" font-family="sans-serif">Короткий опис — одне речення про суть.</text><rect x="14" y="65" width="80" height="40" fill="#e8eeff" rx="5"/><text x="54" y="88" fill="#1C3BA4" font-size="7" text-anchor="middle" font-family="sans-serif">зображення</text><rect x="110" y="74" width="72" height="20" fill="#FEC830" rx="5"/><text x="146" y="88" fill="#111E6C" font-size="8" text-anchor="middle" font-family="sans-serif" font-weight="bold">Розпочати →</text>`
+  },
+  {id:'C',label:'Варіант В',ok:false,
+   svgContent:`<rect width="200" height="140" fill="#f8f8f8"/><rect x="0" y="0" width="200" height="26" fill="#333"/><text x="14" y="17" fill="#fff" font-size="8" font-family="sans-serif">MyProject</text><text x="14" y="50" fill="#111" font-size="8" font-family="sans-serif">Ласкаво просимо до нашої чудової платформи де ви можете навчатись і розвиватись та ще багато чого...</text><rect x="14" y="70" width="50" height="14" fill="#1C3BA4" rx="3"/><text x="39" y="81" fill="#fff" font-size="6" text-anchor="middle" font-family="sans-serif">Реєстрація</text><rect x="70" y="70" width="50" height="14" fill="#6B3FD4" rx="3"/><text x="95" y="81" fill="#fff" font-size="6" text-anchor="middle" font-family="sans-serif">Увійти</text><rect x="126" y="70" width="60" height="14" fill="#D4881A" rx="3"/><text x="156" y="81" fill="#fff" font-size="6" text-anchor="middle" font-family="sans-serif">Безкоштовно</text>`
+  },
+];
+const SITE_REASONS=[
+  {id:'r1',text:'Чіткий заголовок відразу пояснює суть',ok:true},
+  {id:'r2',text:'Одна помітна кнопка — зрозуміло, що робити далі',ok:true},
+  {id:'r3',text:'Коротке пояснення і зображення разом працюють',ok:true},
+  {id:'r4',text:'Забагато кнопок — важко зробити вибір',ok:false},
+  {id:'r5',text:'Кнопка захована — треба шукати',ok:false},
+];
+let siteReasonsSel=[];
+function buildSiteOpts(){
+  const w=document.getElementById('site-opts');w.innerHTML='';
+  SITE_OPTS.forEach(o=>{
+    const d=document.createElement('div');d.className='mock-opt';
+    d.innerHTML=`<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" style="min-height:180px">${o.svgContent}</svg><div class="mock-lbl">${o.label}</div>`;
+    d.onclick=()=>checkSite(o,d);w.appendChild(d);
+  });
+}
+let t10att=0;
+function checkSite(o,el){
+  if(st.t10done)return;t10att++;
+  document.querySelectorAll('#site-opts .mock-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  // Record silently — no right/wrong shown
+  if(!st.lk.t10){st.r.str2=o.ok?score3(t10att):0;st.lk.t10=true;}
+  st.t10sel=o.id;
+  document.getElementById('site-reason-wrap').style.display='block';buildSiteReasons();
+}
+function buildSiteReasons(){
+  const w=document.getElementById('site-reasons');w.innerHTML='';siteReasonsSel=[];
+  SITE_REASONS.forEach(r=>{
+    const d=document.createElement('div');d.className='chk-card';
+    d.innerHTML=`<div class="chkb" id="str-${r.id}"></div>${r.text}`;
+    d.onclick=()=>{
+      if(st.t10done)return;
+      const i=siteReasonsSel.indexOf(r.id);if(i>-1)siteReasonsSel.splice(i,1);else siteReasonsSel.push(r.id);
+      d.classList.toggle('chk',siteReasonsSel.includes(r.id));
+      const el=document.getElementById('str-'+r.id);if(el)el.textContent=siteReasonsSel.includes(r.id)?'✓':'';
+      // Record silently
+      if(!st.lk.t10r){
+        const okSel=siteReasonsSel.filter(id=>SITE_REASONS.find(r=>r.id===id&&r.ok));
+        const sc=okSel.length>=3?1:okSel.length>=2?0.5:0;
+        st.r.str2=Math.min(3,st.r.str2+sc);if(sc>0)st.r.vis3+=0.5;st.lk.t10r=true;
+      }
+    };w.appendChild(d);
+  });
+}
+
+/* ═══════════ T11 — AI PROMPT ═══════════ */
+const AI_PROMPTS=[
+  {id:'A',text:'Намалюй робота.',ok:false},
+  {id:'B',text:'Створи красивий постер про майбутнє.',ok:false},
+  {id:'C',text:'Створи постер: дружній робот у футуристичній бібліотеці, синьо-жовта палітра, без написів.',ok:true},
+];
+function buildAIPrompts(){
+  const w=document.getElementById('ai-prompt-opts');w.innerHTML='';
+  const icons=['🔵','🟡','🟢'];
+  AI_PROMPTS.forEach((p,pi)=>{
+    const d=document.createElement('div');
+    d.style.cssText='border:2.5px solid var(--brd);border-radius:14px;padding:18px 20px;cursor:pointer;background:var(--bg);transition:all .2s;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;';
+    d.innerHTML=`<div style="flex-shrink:0;width:36px;height:36px;border-radius:10px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:800;color:var(--navy)">${p.id}</div>`
+      +`<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Варіант ${p.id}</div><div style="font-size:15px;font-weight:500;line-height:1.6;color:var(--tx)">${p.text}</div></div>`;
+    d.onmouseover=()=>{if(!st.t11done){d.style.borderColor='var(--y)';d.style.background='var(--yl)';}};
+    d.onmouseout=()=>{if(!st.t11done&&d.style.borderColor!=='var(--navy)'){d.style.borderColor='var(--brd)';d.style.background='var(--bg)';}};
+    d.onclick=()=>checkAI(p,d);w.appendChild(d);
+  });
+}
+let t11att=0;
+function checkAI(p,el){
+  if(st.t11done)return;t11att++;
+  // Clear all selections (cards are plain divs, not .arrow-opt)
+  document.querySelectorAll('#ai-prompt-opts > div').forEach(e=>{
+    e.style.borderColor='var(--brd)';e.style.background='var(--bg)';
+  });
+  el.style.borderColor='var(--navy)';el.style.background='var(--yl)';
+  // Record silently
+  if(!st.lk.t11){st.r.cre2=p.ok?score3(t11att):0;st.r.str3+=p.ok?0.5:0;st.lk.t11=true;}
+  st.t11done=true;
+}
+
+/* ═══════════ T12 — LOOPS ═══════════ */
+const LOOP_OPTS=[
+  {id:'long',text:'крок → взяти кристал\nкрок → взяти кристал\nкрок → взяти кристал\nкрок → взяти кристал',ok:false},
+  {id:'loop4',text:'Повторити 4 рази:\n  крок → взяти кристал',ok:true},
+  {id:'loop3',text:'Повторити 3 рази:\n  крок → взяти кристал',ok:false},
+];
+function buildLoopOpts(){
+  const w=document.getElementById('loop-opts');w.innerHTML='';
+  LOOP_OPTS.forEach(o=>{
+    const d=document.createElement('div');d.className='loop-opt';
+    d.innerHTML='<div class="loop-code">'+o.text.replace(/\n/g,'<br>')+'</div>';
+    d.onclick=()=>checkLoop(o,d);w.appendChild(d);
+  });
+}
+let t12att=0;
+function checkLoop(opt,el){
+  if(st.t12done)return;t12att++;
+  document.querySelectorAll('#loop-opts .loop-opt').forEach(e=>e.classList.remove('sel','ok','bad'));
+  if(opt.ok){el.classList.add('ok');showFB('fb-t12','ok','✅ Правильно! «Повторити 4 рази» — коротко і точно.');if(!st.lk.t12){st.r.alg3=score3(t12att);st.lk.t12=true;}st.t12done=true;setTimeout(()=>{document.getElementById('loop-followup').style.display='block';buildLoopNumOpts();},700);}
+  else{showFB('fb-t12','warn','🤔 Спробуй ще. Скільки разів треба повторити для 4 кристалів?');}
+}
+function buildLoopNumOpts(){
+  const w=document.getElementById('loop-num-opts');w.innerHTML='';
+  [4,5,6,8].forEach(n=>{
+    const d=document.createElement('div');d.className='cc';d.style.cssText='min-height:60px;font-size:22px;font-family:"IBM Plex Mono",monospace;font-weight:700';
+    d.textContent=n;d.onclick=()=>checkLoopNum(n,d);w.appendChild(d);
+  });
+}
+function checkLoopNum(n,el){
+  if(st.t12bDone)return;
+  document.querySelectorAll('#loop-num-opts .cc').forEach(e=>e.classList.remove('ok','bad','sel'));
+  if(n===6){
+    el.classList.add('ok');
+    // Hide the first task feedback now that second is answered
+    hideFB('fb-t12');
+    showFB('fb-t12b','ok','✅ Правильно! 6 кристалів — повторюємо 6 разів.');
+    if(!st.lk.t12b){st.r.alg3=Math.min(3,(st.r.alg3||0)+1);st.lk.t12b=true;}
+    st.t12bDone=true;
+  }else{showFB('fb-t12b','warn','🤔 Подумай ще — якщо кристалів 6, скільки разів треба повторити? 🔁');}
+}
+
+/* ═══════════ T13 — APP FEATURES ═══════════ */
+const APP_ITEMS=[
+  {id:'calendar',ic:'📅',label:'Календар дедлайнів',ok:true},
+  {id:'reminders',ic:'🔔',label:'Нагадування',ok:true},
+  {id:'tasks',ic:'✅',label:'Список завдань',ok:true},
+  {id:'ai_chat',ic:'🤖',label:'Чат з AI-помічником',ok:true},
+  {id:'music',ic:'🎵',label:'Випадкова музика',ok:false},
+  {id:'bg',ic:'🖼️',label:'Анімований фон',ok:false},
+  {id:'logo',ic:'🏷️',label:'Велике лого',ok:false},
+  {id:'stickers',ic:'🎀',label:'Колекція наліпок',ok:false},
+];
+function buildAppOpts(){
+  const w=document.getElementById('app-opts');w.innerHTML='';
+  APP_ITEMS.forEach(it=>{
+    const d=document.createElement('div');d.className='cc';d.innerHTML=`<span class="ic">${it.ic}</span>${it.label}`;
+    d.onclick=()=>togApp(it,d);w.appendChild(d);
+  });
+}
+function togApp(it,el){
+  if(st.t13done)return;
+  const i=st.appSel.indexOf(it.id);
+  if(i>-1){st.appSel.splice(i,1);el.classList.remove('sel');}
+  else if(st.appSel.length<3){st.appSel.push(it.id);el.classList.add('sel');}
+  document.getElementById('app-cnt').textContent='Обрано: '+st.appSel.length+' / 3';
+  if(st.appSel.length===3)checkApp(false);
+}
+function checkApp(silent=false){
+  if(st.t13done)return;
+  const okIds=APP_ITEMS.filter(i=>i.ok).map(i=>i.id);
+  const correct=st.appSel.filter(s=>okIds.includes(s)).length;
+  let sc=0;if(correct===3)sc=2;else if(correct===2)sc=1;
+  if(!st.lk.t13){st.r.str4=sc;st.r.cre3=Math.min(1,sc*0.5);st.lk.t13=true;}st.t13done=true;
+  if(!silent){if(correct===3)showFB('fb-t13','ok','✅ Відмінно! Ці функції справді розв\'язують різні задачі.');else if(correct>=2)showFB('fb-t13','ok','✅ Майже! Більшість функцій корисні.');else showFB('fb-t13','warn','🤔 Деякі обрані функції — більше декор, ніж реальна допомога.');}
+}
+
+/* ═══════════ T14 — SAFE PATH ═══════════ */
+// T14 — route map config (0-indexed)
+const ROUTE_MAP = {
+  rows: 6, cols: 6,
+  start: [0,0],
+  portal: [5,4],
+  bridge: [2,2],
+  blocked: [[1,1],[1,3],[3,1],[3,3]]
+};
+
+const ROUTES = {
+  a: {
+    label: 'Маршрут А',
+    path: [[0,0],[0,1],[1,1],[2,1],[2,2],[2,3],[2,4],[3,4],[4,4],[5,4]]
+  },
+  b: {
+    label: 'Маршрут Б',
+    path: [[0,0],[1,0],[2,0],[2,1],[2,2],[2,3],[2,4],[3,4],[4,4],[5,4]]
+  },
+  c: {
+    label: 'Маршрут В',
+    path: [[0,0],[1,0],[2,0],[2,1],[2,2],[2,3],[2,4],[2,5],[3,5],[4,5],[4,4],[5,4]]
+  }
+};
+
+function validateRoute(path, map){
+  const key=([r,c])=>`${r},${c}`;
+  const blocked=new Set(map.blocked.map(key));
+  const steps=path.length-1;
+  const last=path[path.length-1];
+  const isContinuous=path.slice(1).every(([r,cc],i)=>{
+    const [pr,pc]=path[i];
+    return Math.abs(r-pr)+Math.abs(cc-pc)===1;
+  });
+  const doesNotTouchBlocked=path.every(cell=>!blocked.has(key(cell)));
+  const bridgeVisits=path.filter(([r,cc])=>r===map.bridge[0]&&cc===map.bridge[1]).length;
+  const reachesPortal=last[0]===map.portal[0]&&last[1]===map.portal[1];
+  return {
+    isValid: isContinuous&&doesNotTouchBlocked&&bridgeVisits===1&&reachesPortal&&steps<=10,
+    steps
+  };
+}
+
+function makeRouteSVG(path){
+  const map=ROUTE_MAP;
+  const sz=26, gap=3;
+  const W=map.cols*(sz+gap), H=map.rows*(sz+gap);
+  const key=([r,cc])=>`${r},${cc}`;
+  const blockedSet=new Set(map.blocked.map(key));
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block">`;
+
+  // helper: cell centre
+  const cx=cc=>(cc*(sz+gap)+sz/2);
+  const cy=r=>(r*(sz+gap)+sz/2);
+
+  // Draw grid cells
+  for(let r=0;r<map.rows;r++) for(let cc=0;cc<map.cols;cc++){
+    const x=cc*(sz+gap), y=r*(sz+gap);
+    const isBlocked=blockedSet.has(`${r},${cc}`);
+    const isBridge=r===map.bridge[0]&&cc===map.bridge[1];
+    const isStart=r===map.start[0]&&cc===map.start[1];
+    const isPortal=r===map.portal[0]&&cc===map.portal[1];
+    let fill='#ECEEF6', stroke='#C8CBDF';
+    if(isBlocked){fill='#FEE2E2';stroke='#F87171';}
+    else if(isBridge){fill='#FDE68A';stroke='#D4881A';}
+    svg+=`<rect x="${x}" y="${y}" width="${sz}" height="${sz}" rx="5" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
+    if(isStart) svg+=`<text x="${cx(cc)}" y="${cy(r)+5}" text-anchor="middle" font-size="16">🧑</text>`;
+    else if(isPortal) svg+=`<text x="${cx(cc)}" y="${cy(r)+5}" text-anchor="middle" font-size="16">🌀</text>`;
+    else if(isBridge) svg+=`<text x="${cx(cc)}" y="${cy(r)+4}" text-anchor="middle" font-size="8" font-weight="bold" font-family="sans-serif" fill="#8a4a00">міст</text>`;
+    else if(isBlocked) svg+=`<text x="${cx(cc)}" y="${cy(r)+5}" text-anchor="middle" font-size="13">🚫</text>`;
+  }
+
+  // Draw route lines
+  for(let i=1;i<path.length;i++){
+    const [r1,c1]=path[i-1],[r2,c2]=path[i];
+    svg+=`<line x1="${cx(c1)}" y1="${cy(r1)}" x2="${cx(c2)}" y2="${cy(r2)}" stroke="#1C3BA4" stroke-width="2.5" opacity=".75"/>`;
+  }
+
+  // Draw step numbers: path[0]=start (no number), path[1]=step1 ... path[n-1]=last step
+  // Portal cell gets a small corner badge instead of full circle to not cover emoji
+  path.slice(1).forEach(([r,cc],i)=>{
+    const stepNum=i+1;
+    const isPortal=r===map.portal[0]&&cc===map.portal[1];
+    const isBlocked=blockedSet.has(`${r},${cc}`);
+    const color=isBlocked?'#D94F3D':'#1C3BA4';
+    if(isPortal){
+      // Small badge in top-right corner
+      const bx=cc*(sz+gap)+sz-6, by=r*(sz+gap)+6;
+      svg+=`<circle cx="${bx}" cy="${by}" r="7" fill="${color}"/>`;
+      svg+=`<text x="${bx}" y="${by+3.5}" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">${stepNum}</text>`;
+    } else {
+      svg+=`<circle cx="${cx(cc)}" cy="${cy(r)}" r="9" fill="${color}" opacity=".9"/>`;
+      svg+=`<text x="${cx(cc)}" y="${cy(r)+4}" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">${stepNum}</text>`;
+    }
+  });
+
+  svg+='</svg>';
+  return svg;
+}
+
+const PATH_OPTS_T14=[
+  {id:'a', label:'Маршрут А', path:ROUTES.a.path},
+  {id:'b', label:'Маршрут Б', path:ROUTES.b.path},
+  {id:'c', label:'Маршрут В', path:ROUTES.c.path},
+];
+
+function buildPathOpts(){
+  const w=document.getElementById('path-opts');
+  if(!w)return;
+  w.innerHTML='';
+  w.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;';
+  PATH_OPTS_T14.forEach(o=>{
+    const validation=validateRoute(o.path,ROUTE_MAP);
+    const d=document.createElement('div');
+    d.style.cssText='border:2.5px solid var(--brd);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--bg);';
+    d.innerHTML=`<div style="padding:10px 10px 6px;background:var(--surf)">${makeRouteSVG(o.path)}</div>
+      <div style="padding:9px 12px;font-size:13px;font-weight:800;color:var(--navy);font-family:'IBM Plex Mono',monospace">${o.label}</div>`;
+    d.onmouseover=()=>{if(!st.t14done) d.style.borderColor='var(--y)';};
+    d.onmouseout=()=>{if(!st.t14done&&d.style.borderColor!=='var(--navy)') d.style.borderColor='var(--brd)';};
+    d.onclick=()=>{
+      if(st.t14done)return; t14att++;
+      document.querySelectorAll('#path-opts > div').forEach(e=>{e.style.borderColor='var(--brd)';e.style.background='var(--bg)';});
+      if(validation.isValid){
+        d.style.borderColor='var(--ok)';
+        showFB('fb-t14','ok','✅ Правильно! Цей маршрут виконує всі умови.');
+        if(!st.lk.t14){st.r.sp3=score3(t14att);st.lk.t14=true;}
+        st.t14done=true;
+      } else {
+        d.style.borderColor='var(--err)';
+        showFB('fb-t14','warn','🤔 Подумай ще — перевір заборонені клітинки, міст і кількість кроків 🧭');
+      }
+    };
+    w.appendChild(d);
+  });
+}
+
+let t14att=0;
+// checkPath handled inline in buildPathOpts
+
+/* ═══════════ T15 — RULE / CONDITIONAL ═══════════ */
+const RULE15_SEQ=['clear','blocked','clear','clear','blocked','clear'];
+const RULE15_OPTS=[
+  {id:'А',chips:['крок','стрибок','крок','крок','стрибок','крок'],ok:true},
+  {id:'Б',chips:['крок','крок','крок','крок','крок','крок'],ok:false},
+  {id:'В',chips:['стрибок','стрибок','стрибок','стрибок','стрибок','стрибок'],ok:false},
+  {id:'Г',chips:['стрибок','крок','стрибок','стрибок','крок','стрибок'],ok:false},
+];
+function buildRuleStrip15(){
+  const w=document.getElementById('rule-strip15');w.innerHTML='';
+  RULE15_SEQ.forEach(c=>{const d=document.createElement('div');d.className='rule-cell '+(c==='clear'?'clear':'blocked');d.textContent=c==='clear'?'🟩':'🟥';w.appendChild(d)});
+}
+function buildRuleOpts15(){
+  const w=document.getElementById('rule-opts15');w.innerHTML='';
+  RULE15_OPTS.forEach(o=>{
+    const d=document.createElement('div');d.className='rule-opt';
+    d.innerHTML='<strong style="font-size:13px">Варіант '+o.id+':</strong><div class="cmd-chips" style="margin-top:6px">'+o.chips.map(c=>'<span class="chip">'+c+'</span>').join('')+'</div>';
+    d.onclick=()=>checkRule15(o,d);w.appendChild(d);
+  });
+}
+let t15att=0;
+function checkRule15(o,el){
+  if(st.t15done)return;t15att++;
+  document.querySelectorAll('#rule-opts15 .rule-opt').forEach(e=>e.classList.remove('sel','ok','bad'));
+  if(o.ok){el.classList.add('ok');showFB('fb-t15','ok','✅ Правильно! Робот виконує правило: вільна → крок, перешкода → стрибок.');if(!st.lk.t15){st.r.alg4=score3(t15att);st.lk.t15=true;}st.t15done=true;}
+  else{showFB('fb-t15','warn','🤔 Перевір правило ще раз — для кожного типу клітинки своя дія 🤖');}
+}
+
+/* ═══════════ T16 — ODD ELEMENT ═══════════ */
+const FUTURECITY=[
+  // Item 0 — fits
+  {id:'hover',ic:'🛸',label:'Гравітаційна платформа',fits:true,
+   bg:'linear-gradient(135deg,#060d2e,#0d1f5c)',color:'#7eb8ff',
+   svgAccent:'<circle cx="60" cy="60" r="30" fill="none" stroke="#7eb8ff" stroke-width="2" opacity=".6"/><ellipse cx="60" cy="70" rx="22" ry="10" fill="#0d2080" opacity=".8"/>'},
+  // Item 1 — DOES NOT FIT (subtle: warm brick building, not futuristic)
+  {id:'brick',ic:'🧱',label:'Цегляна будівля XIX ст.',fits:false,
+   bg:'linear-gradient(135deg,#3d1f0d,#6b3520)',color:'#f5c08a',
+   svgAccent:'<rect x="30" y="30" width="60" height="50" fill="#8b4513" opacity=".5" rx="2"/><rect x="40" y="55" width="10" height="20" fill="#5a2d0c" opacity=".7"/>'},
+  // Item 2 — fits
+  {id:'drone',ic:'🚁',label:'Поліцейський дрон',fits:true,
+   bg:'linear-gradient(135deg,#041028,#0a2550)',color:'#4dd0e1',
+   svgAccent:'<circle cx="60" cy="55" r="15" fill="#0a3060" stroke="#4dd0e1" stroke-width="1.5"/>'},
+  // Item 3 — fits
+  {id:'screen',ic:'📡',label:'Антена зв\'язку',fits:true,
+   bg:'linear-gradient(135deg,#070e2e,#101e55)',color:'#b39ddb',
+   svgAccent:'<line x1="60" y1="20" x2="60" y2="80" stroke="#b39ddb" stroke-width="2"/><ellipse cx="60" cy="30" rx="25" ry="12" fill="none" stroke="#b39ddb" stroke-width="1.5"/>'},
+  // Item 4 — DOES NOT FIT (gas lamp, old style, but has dark background to blend)
+  {id:'lamp',ic:'🪔',label:'Старовинний газовий ліхтар',fits:false,
+   bg:'linear-gradient(135deg,#1a1200,#2e2000)',color:'#ffd54f',
+   svgAccent:'<rect x="55" y="30" width="10" height="50" fill="#4a3800" opacity=".7"/><circle cx="60" cy="28" r="12" fill="#ff8f00" opacity=".6"/>'},
+  // Item 5 — fits
+  {id:'gate',ic:'🌐',label:'Портал між районами',fits:true,
+   bg:'linear-gradient(135deg,#050820,#0c1540)',color:'#80deea',
+   svgAccent:'<ellipse cx="60" cy="55" rx="28" ry="35" fill="none" stroke="#80deea" stroke-width="2" opacity=".7"/><ellipse cx="60" cy="55" rx="16" ry="22" fill="#0c1f60" opacity=".5"/>'},
+  // Item 6 — fits
+  {id:'tube',ic:'🚇',label:'Підземний гіперлуп',fits:true,
+   bg:'linear-gradient(135deg,#030a1e,#08183a)',color:'#90caf9',
+   svgAccent:'<rect x="20" y="50" width="80" height="20" rx="10" fill="#0d2860" stroke="#90caf9" stroke-width="1.5"/>'},
+  // Item 7 — fits
+  {id:'ai',ic:'🔬',label:'AI-лабораторія',fits:true,
+   bg:'linear-gradient(135deg,#040f30,#091a50)',color:'#80ff72',
+   svgAccent:'<circle cx="60" cy="55" r="20" fill="#042010" stroke="#80ff72" stroke-width="1.5" opacity=".7"/>'},
+];
+let citySel=[];
+function buildFutureCity(){
+  const w=document.getElementById('futurecity-cards');w.innerHTML='';
+  citySel=[];
+  w.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0;';
+  FUTURECITY.forEach(it=>{
+    const d=document.createElement('div');d.className='style-card';d.id='city-'+it.id;
+    // Rich visual card: gradient background + SVG accent + icon
+    d.innerHTML=`<div class="style-inner" style="background:${it.bg};color:${it.color};font-size:36px;position:relative;overflow:hidden">
+      <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.35" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">${it.svgAccent||''}</svg>
+      <span style="position:relative;z-index:1">${it.ic}</span>
+    </div><div class="style-lbl">${it.label}</div>`;
+    d.onclick=()=>togCityCard(it,d);w.appendChild(d);
+  });
+}
+function togCityCard(it,el){
+  if(st.t16done)return;
+  const i=citySel.indexOf(it.id);
+  if(i>-1){citySel.splice(i,1);el.classList.remove('sel');}
+  else if(citySel.length<2){citySel.push(it.id);el.classList.add('sel');}
+  const cnt=document.getElementById('city-cnt');if(cnt)cnt.textContent='Обрано: '+citySel.length+' / 2';
+  if(citySel.length===2)checkFutureCity();
+}
+let t16att=0;
+function checkFutureCity(){
+  if(st.t16done)return;t16att++;
+  const wrongOnes=FUTURECITY.filter(i=>!i.fits).map(i=>i.id);
+  const correct=citySel.filter(id=>wrongOnes.includes(id)).length;
+  let sc=0;if(correct===2)sc=score3(t16att);else if(correct===1)sc=1;
+  if(!st.lk.t16){st.r.vis3=Math.max(st.r.vis3,sc);st.lk.t16=true;}
+  st.t16done=true;
+  // No feedback — result recorded silently
+}
+
+/* ═══════════ T17 — SITE FLOW ═══════════ */
+// T17 two-step: select wrong arrow, then choose correct destination
+let t17step=1,t17wrongArrowSelected=null;
+function buildSiteFlow(){
+  t17step=1;t17wrongArrowSelected=null;
+  const w=document.getElementById('site-flow');
+  w.innerHTML=`
+  <div style="position:relative;width:100%;max-width:580px;height:270px;background:#f8faff;border-radius:14px;border:1.5px solid var(--brd);overflow:hidden">
+    <svg id="flow-svg" viewBox="0 0 580 270" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%">
+      <defs>
+        <marker id="arrN" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+          <path d="M0,0 L0,7 L9,3.5 z" fill="#1C3BA4"/>
+        </marker>
+      </defs>
+      <rect x="15" y="110" width="120" height="46" rx="10" fill="#111E6C"/>
+      <text x="75" y="137" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif">&#x1F3E0; Головна</text>
+      <rect x="210" y="30" width="140" height="46" rx="10" fill="#e8eeff" stroke="#1C3BA4" stroke-width="1.5"/>
+      <text x="280" y="57" text-anchor="middle" fill="#1C3BA4" font-size="12" font-weight="bold" font-family="sans-serif">&#x1F5BC; Галерея</text>
+      <rect x="210" y="110" width="140" height="46" rx="10" fill="#fffbe6" stroke="#D4881A" stroke-width="1.5"/>
+      <text x="280" y="128" text-anchor="middle" fill="#7a4a00" font-size="11" font-weight="bold" font-family="sans-serif">&#x1F510; Кнопка</text>
+      <text x="280" y="143" text-anchor="middle" fill="#7a4a00" font-size="11" font-weight="bold" font-family="sans-serif">&#xAB;Зареєструватися&#xBB;</text>
+      <rect x="210" y="196" width="140" height="46" rx="10" fill="#f0fff0" stroke="#1C3BA4" stroke-width="1.5"/>
+      <text x="280" y="223" text-anchor="middle" fill="#1C3BA4" font-size="12" font-weight="bold" font-family="sans-serif">&#x1F4DD; Форма реєстрації</text>
+      <rect x="425" y="196" width="140" height="46" rx="10" fill="#e8eeff" stroke="#1C3BA4" stroke-width="1.5"/>
+      <text x="495" y="223" text-anchor="middle" fill="#1C3BA4" font-size="12" font-weight="bold" font-family="sans-serif">&#x2705; Підтвердження</text>
+      <line id="arr-A" x1="135" y1="123" x2="208" y2="65" stroke="#1C3BA4" stroke-width="2.5" marker-end="url(#arrN)" style="cursor:pointer" onclick="selectArrow('A')"/>
+      <line id="arr-B" x1="135" y1="135" x2="208" y2="133" stroke="#1C3BA4" stroke-width="2.5" marker-end="url(#arrN)" style="cursor:pointer" onclick="selectArrow('B')"/>
+      <line id="arr-C" x1="280" y1="110" x2="280" y2="76" stroke="#1C3BA4" stroke-width="2.5" marker-end="url(#arrN)" style="cursor:pointer" onclick="selectArrow('C')"/>
+      <line id="arr-D" x1="350" y1="219" x2="423" y2="219" stroke="#1C3BA4" stroke-width="2.5" marker-end="url(#arrN)" style="cursor:pointer" onclick="selectArrow('D')"/>
+    </svg>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-top:10px">Натисни на стрілку, яка, на твою думку, веде не туди.</p>
+  <div id="t17-step2" style="display:none;margin-top:16px">
+    <h3 style="margin-bottom:10px">Куди має вести цей перехід?</h3>
+    <div style="display:flex;flex-direction:column;gap:8px" id="t17-dest-opts"></div>
+  </div>`;
+}
+function selectArrow(id){
+  if(st.t17done||t17step!==1)return;
+  ['A','B','C','D'].forEach(a=>{
+    const el=document.getElementById('arr-'+a);
+    if(el){el.setAttribute('stroke',a===id?'#D4881A':'#1C3BA4');el.setAttribute('stroke-width',a===id?'4':'2.5');}
+  });
+  t17wrongArrowSelected=id;t17step=2;
+  const step2=document.getElementById('t17-step2');step2.style.display='block';
+  const opts=document.getElementById('t17-dest-opts');opts.innerHTML='';
+  ['Галерея','Форма реєстрації','Підтвердження'].forEach(dest=>{
+    const d=document.createElement('div');
+    d.style.cssText='border:2px solid var(--brd);border-radius:10px;padding:12px 16px;cursor:pointer;background:var(--bg);font-size:14px;font-weight:600;transition:all .2s;';
+    d.textContent=dest;
+    d.onmouseover=()=>{if(!st.t17done)d.style.borderColor='var(--y)';};
+    d.onmouseout=()=>{if(!st.t17done&&d.style.borderColor!=='var(--ok)'&&d.style.borderColor!=='var(--err)')d.style.borderColor='var(--brd)';};
+    d.onclick=()=>checkFlowStep2(d,id,dest);opts.appendChild(d);
+  });
+}
+function checkFlowStep2(el,arrowId,dest){
+  if(st.t17done)return;t17att++;
+  const correctArrow=(arrowId==='C');
+  const correctDest=(dest==='Форма реєстрації');
+  if(correctArrow&&correctDest){
+    el.style.borderColor='var(--ok)';el.style.background='#d8f0b8';
+    showFB('fb-t17','ok','✅ Готово! Тепер користувач зможе пройти реєстрацію до кінця.');
+    if(!st.lk.t17){st.r.str4=Math.min(3,(st.r.str4||0)+score3(t17att));st.r.alg4=Math.min(3,(st.r.alg4||0)+0.5);st.r.seq=Math.min(3,(st.r.seq||0)+0.5);st.lk.t17=true;}
+    st.t17done=true;
+  }else if(correctArrow&&!correctDest){
+    el.style.borderColor='var(--warn)';
+    showFB('fb-t17','warn','🤔 Стрілку знайдено правильно! А куди саме вона має вести?');
+  }else{
+    el.style.borderColor='var(--err)';
+    showFB('fb-t17','warn','🤔 Ця стрілка веде правильно — подивися уважніше на схему 🔍');
+    t17step=1;t17wrongArrowSelected=null;
+    ['A','B','C','D'].forEach(a=>{const e=document.getElementById('arr-'+a);if(e){e.setAttribute('stroke','#1C3BA4');e.setAttribute('stroke-width','2.5');}});
+    document.getElementById('t17-step2').style.display='none';
+  }
+}
+let t17att=0; // t17 handled by selectArrow/checkFlowStep2
+
+/* ═══════════ T18 — LEVEL ELEMENTS ═══════════ */
+const LEVEL_ITEMS=[
+  {id:'platform',ic:'⬆️',label:'Рухома платформа',cat:'obstacle',ok:true},
+  {id:'trap',ic:'🕳️',label:'Яма-пастка',cat:'obstacle',ok:true},
+  {id:'key',ic:'🗝️',label:'Прихований ключ',cat:'goal',ok:true},
+  {id:'coins',ic:'🪙',label:'Монетки за складним маршрутом',cat:'goal',ok:true},
+  {id:'teleport',ic:'🌀',label:'Телепорт у таємну кімнату',cat:'special',ok:true},
+  {id:'drone',ic:'🤖',label:'Дружній дрон-помічник',cat:'special',ok:true},
+  {id:'flag',ic:'🚩',label:'Декоративний прапорець',cat:'decor',ok:false},
+  {id:'stars',ic:'⭐',label:'Зірочки на фоні',cat:'decor',ok:false},
+];
+function buildLevelOpts(){
+  const w=document.getElementById('level-opts');w.innerHTML='';
+  LEVEL_ITEMS.forEach(it=>{
+    const d=document.createElement('div');d.className='cc';d.innerHTML=`<span class="ic">${it.ic}</span>${it.label}`;
+    d.onclick=()=>togLevel(it,d);w.appendChild(d);
+  });
+}
+function togLevel(it,el){
+  if(st.t18done)return;
+  const i=st.levelSel.indexOf(it.id);
+  if(i>-1){st.levelSel.splice(i,1);el.classList.remove('sel');}
+  else if(st.levelSel.length<3){st.levelSel.push(it.id);el.classList.add('sel');}
+  document.getElementById('level-cnt').textContent='Обрано: '+st.levelSel.length+' / 3';
+  if(st.levelSel.length===3)checkLevel(false);
+}
+function checkLevel(silent=false){
+  if(st.t18done)return;
+  const cats=new Set(st.levelSel.map(id=>LEVEL_ITEMS.find(i=>i.id===id)?.cat));
+  const allOk=st.levelSel.every(id=>LEVEL_ITEMS.find(i=>i.id===id)?.ok);
+  const diverseCats=cats.size===3;
+  let sc=0;
+  if(allOk&&diverseCats)sc=3;
+  else if(allOk)sc=2;
+  else if(diverseCats)sc=1;
+  if(!st.lk.t18){st.r.cre3=Math.max(st.r.cre3||0,sc===3?1:sc===2?0.75:sc===1?0.5:0);st.r.str4=Math.min(3,(st.r.str4||0)+0.5);st.lk.t18=true;}
+  st.t18done=true;
+  // No feedback — МІК records internally
+
+}
+
+/* ═══════════ FINAL QUESTIONS ═══════════ */
+function pickFQ1(val,el){
+  if(!Array.isArray(st.fq1))st.fq1=[];
+  const i=st.fq1.indexOf(val);
+  if(i>-1){st.fq1.splice(i,1);el.classList.remove('sel');}
+  else{st.fq1.push(val);el.classList.add('sel');}
+  document.getElementById('err-fq1').classList.remove('on');
+}
+function togFQ2(val,el){
+  const nothingKeys=['minecraft','roblox','gamedev','drawing','design','frontend','ai'];
+  if(val==='nothing'){
+    if(st.fq2.includes('nothing')){st.fq2=[];}
+    else{st.fq2=['nothing'];nothingKeys.forEach(k=>{const e=document.getElementById('fq2-'+k);if(e){e.textContent='';e.parentElement.classList.remove('chk');}});}
+  } else {
+    st.fq2=st.fq2.filter(x=>x!=='nothing');
+    const ni=document.getElementById('fq2-nothing');if(ni){ni.textContent='';ni.parentElement.classList.remove('chk');}
+    const i=st.fq2.indexOf(val);if(i>-1)st.fq2.splice(i,1);else st.fq2.push(val);
+  }
+  [...nothingKeys,'nothing'].forEach(k=>{
+    const has=st.fq2.includes(k);const e=document.getElementById('fq2-'+k);if(!e)return;
+    e.parentElement.classList.toggle('chk',has);e.textContent=has?'✓':'';
+  });
+}
+
+/* ═══════════ FINISH & CALC ═══════════ */
+function finish(){
+  if(!st.fq1||!st.fq1.length){document.getElementById('err-fq1').classList.add('on');return;}
+  calcAll();renderResult();go(22);
+}
+
+function calcAll(){
+  const r=st.r;
+  // algorithmic: tasks 1,7,12,15 — max 3+3+3+3 = 12 (weights factor in)
+  const algoRaw=(r.alg1||0)+(r.alg2||0)+(r.alg3||0)+(r.alg4||0);
+  st._algoP=Math.round(algoRaw/12*100);
+  // spatial: tasks 3,8,14 — max 3+3+3 = 9
+  const spatRaw=(r.sp1||0)+(r.sp2||0)+(r.sp3||0);
+  st._spatP=Math.round(spatRaw/9*100);
+  // visual: tasks 2,9,16 — max 3+3+3 = 9 (plus partial from reasons)
+  const visRaw=Math.min(3,r.vis1||0)+Math.min(3,r.vis2||0)+Math.min(3,r.vis3||0);
+  st._visP=Math.round(visRaw/9*100);
+  // structural: tasks 4,10,13,17 — max varied: 1+2+2+3 = 8 weight-adjusted
+  const strRaw=(r.str1||0)+(r.str2||0)+(r.str3||0)*2+(r.str4||0);
+  st._strP=Math.round(Math.min(strRaw,12)/12*100);
+  // creative: tasks 5,11,18 — max 1+1+1 = 3
+  const creAttempted=[st.lk.t5,st.lk.t11,st.lk.t18].filter(Boolean).length;
+  const creRaw=(r.cre1||0)+(r.cre2||0)+(r.cre3||0);
+  st._creP=creAttempted===0?-1:Math.round(Math.min(creRaw/creAttempted,1)*100);
+  // sequence: tasks 6 + bonus from 4,17
+  const seqRaw=Math.min(3,r.seq||0);
+  st._seqP=Math.round(seqRaw/3*100);
+
+  // 3 big profiles
+  const aP=st._algoP,spP=st._spatP,viP=st._visP,stP=st._strP,crP=st._creP===-1?50:st._creP,seP=st._seqP;
+  st.itR=Math.round(aP*0.50+stP*0.30+spP*0.20);
+  st.vcR=Math.round(viP*0.55+crP*0.35+stP*0.10);
+  st.ptR=Math.round(stP*0.45+seP*0.25+viP*0.15+aP*0.15);
+
+  // hidden readiness scores
+  const gameReadiness=Math.round(aP*0.40+spP*0.25+stP*0.20+crP*0.15);
+  const drawingReadiness=Math.round(viP*0.60+crP*0.40);
+  const designReadiness=Math.round(viP*0.45+stP*0.35+crP*0.20);
+  const frontendReadiness=Math.round(aP*0.40+stP*0.40+viP*0.20);
+  const aiReadiness=Math.round(crP*0.30+stP*0.25+viP*0.20+aP*0.15+seP*0.10);
+  const projectThinking=st.ptR;
+  const age=st.age||12;
+  const selectedInterest=Array.isArray(st.fq1)?st.fq1[0]:st.fq1; // primary interest
+
+  // RECOMMENDATION LOGIC
+  let mainC=null,altC=null,fallbackNote=null;
+
+  // GameDev Junior
+  if(selectedInterest==='gamedev'&&age>=12&&gameReadiness>=75&&projectThinking>=65){
+    mainC='gamedev';
+  }
+  // Roblox as primary
+  else if(selectedInterest==='roblox'&&gameReadiness>=55){
+    mainC='roblox';
+  }
+  // GameDev fallback → Roblox
+  else if(selectedInterest==='gamedev'&&age>=12&&(gameReadiness<75||projectThinking<65)){
+    mainC='roblox';
+    fallbackNote='Інтерес до GameDev вже є! Roblox Studio — відмінна стартова точка. Після освоєння основ можна перейти до GameDev Junior.';
+  }
+  // Minecraft — recommend if child selected minecraft AND passes threshold
+  else if(selectedInterest==='minecraft'&&gameReadiness>=40){
+    mainC='minecraft';
+  }
+  // Minecraft as fallback: roblox interest but low readiness (any age)
+  else if(selectedInterest==='roblox'&&gameReadiness<55){
+    mainC='minecraft';
+    fallbackNote='Інтерес до Roblox вже є. Minecraft — зручний старт, після якого легше перейти до Roblox Studio.';
+  }
+  // Drawing
+  else if(selectedInterest==='drawing'&&drawingReadiness>=55){
+    mainC='drawing';
+  }
+  // Design Junior
+  else if(selectedInterest==='design'&&designReadiness>=55&&projectThinking>=50){
+    mainC='design';
+  }
+  // Frontend Junior
+  else if(selectedInterest==='frontend'&&frontendReadiness>=55&&projectThinking>=50){
+    mainC='frontend';
+  }
+  // AI Creator
+  else if(selectedInterest==='ai'&&aiReadiness>=55&&projectThinking>=50){
+    mainC='ai';
+  }
+  // AI Creator low readiness → find best profile + note
+  else if(selectedInterest==='ai'&&(aiReadiness<55||projectThinking<50)){
+    fallbackNote='Інтерес до AI-інструментів уже є. Після базового старту можна буде повернутися до цього напряму та розглянути AI Creator як наступний крок.';
+    // fall through to best-match logic below
+  }
+
+  // Fallback: if no primary set, pick by profile dominance + readiness
+  if(!mainC){
+    const candidates=[];
+    // Boost creative/visual courses when vcR dominates over itR
+    const vcBoost=(st.vcR>st.itR+15)?1.2:1;
+    const itBoost=(st.itR>st.vcR+15)?1.2:1;
+    if(age>=COURSES.gamedev.minAge&&age<=COURSES.gamedev.maxAge&&gameReadiness>=75&&projectThinking>=65)candidates.push({c:'gamedev',score:gameReadiness*itBoost});
+    if(age>=COURSES.roblox.minAge&&age<=COURSES.roblox.maxAge&&gameReadiness>=55)candidates.push({c:'roblox',score:gameReadiness*itBoost});
+    if(age>=COURSES.minecraft.minAge&&age<=COURSES.minecraft.maxAge&&gameReadiness>=40)candidates.push({c:'minecraft',score:gameReadiness*0.8*itBoost});
+    if(age>=COURSES.drawing.minAge&&age<=COURSES.drawing.maxAge&&drawingReadiness>=40)candidates.push({c:'drawing',score:drawingReadiness*vcBoost});
+    if(age>=COURSES.design.minAge&&age<=COURSES.design.maxAge&&designReadiness>=40)candidates.push({c:'design',score:designReadiness*vcBoost});
+    if(age>=COURSES.frontend.minAge&&age<=COURSES.frontend.maxAge&&frontendReadiness>=40)candidates.push({c:'frontend',score:frontendReadiness*itBoost});
+    if(age>=COURSES.ai.minAge&&age<=COURSES.ai.maxAge&&aiReadiness>=40)candidates.push({c:'ai',score:aiReadiness*(vcBoost*0.7+itBoost*0.3)});
+    if(candidates.length>0){candidates.sort((a,b)=>b.score-a.score);mainC=candidates[0].c;}
+    else{
+      // Last resort: pick by profile
+      if(st.vcR>=st.itR&&st.vcR>=st.ptR)mainC=age<=12?'drawing':'drawing';
+      else mainC=age>=12?'roblox':'minecraft';
+    }
+  }
+
+  // ALT recommendation
+  const alts=[];
+  if(mainC!=='drawing'&&drawingReadiness>=65)alts.push({c:'drawing',score:drawingReadiness});
+  if(mainC!=='design'&&age<=12&&designReadiness>=65&&projectThinking>=60)alts.push({c:'design',score:designReadiness});
+  if(mainC!=='frontend'&&age<=12&&frontendReadiness>=65&&projectThinking>=60)alts.push({c:'frontend',score:frontendReadiness});
+  if(!['roblox','minecraft','gamedev'].includes(mainC)&&gameReadiness>=55)alts.push({c:age>=12?'roblox':'minecraft',score:gameReadiness});
+  if(mainC!=='ai'&&aiReadiness>=65&&(selectedInterest==='ai'||st.fq2.includes('ai')))alts.push({c:'ai',score:aiReadiness});
+  // age filter
+  const validAlts=alts.filter(a=>age>=COURSES[a.c].minAge&&age<=COURSES[a.c].maxAge);
+  if(validAlts.length>0){validAlts.sort((a,b)=>b.score-a.score);altC=validAlts[0].c;}
+
+  // Final age safety check
+  const mc=COURSES[mainC];
+  if(mainC&&(age<mc.minAge||age>mc.maxAge)){
+    // pick age-valid fallback
+    if(age>=12)mainC='roblox';else mainC='minecraft';
+  }
+  if(altC){const ac=COURSES[altC];if(age<ac.minAge||age>ac.maxAge)altC=null;}
+
+  st.mainC=mainC;st.altC=altC;st._fallbackNote=fallbackNote;
+}
+
+/* ═══════════ RENDER ═══════════ */
+function declineName(n){
+  const low=n.trim().toLowerCase();
+  const map={'олександр':'Олександра','сашко':'Сашка','микола':'Миколи','іван':'Івана','денис':'Дениса','кирило':'Кирила','марко':'Марка','степан':'Степана','тимур':'Тимура','максим':'Максима','артем':'Артема','богдан':'Богдана','владислав':'Владислава','назар':'Назара','василь':'Василя','дмитро':'Дмитра','андрій':'Андрія','михайло':'Михайла','роман':'Романа','нікіта':'Нікіти','костя':'Кості','юра':'Юри','паша':'Паші','вова':'Вови','коля':'Колі','женя':'Жені',
+    'анна':'Анни','аня':'Ані','катерина':'Катерини','катя':'Каті','марія':'Марії','маша':'Маші','наталія':'Наталії','наташа':'Наташі','олена':'Олени','лена':'Лени','ірина':'Ірини','іра':'Іри','тетяна':'Тетяни','таня':'Тані','юлія':'Юлії','юля':'Юлі','вікторія':'Вікторії','віка':'Віки','аліна':'Аліни','аліса':'Аліси','дарина':'Дарини','даша':'Даші','валерія':'Валерії','лера':'Лери','ксенія':'Ксенії','ксюша':'Ксюші','поліна':'Поліни','соня':'Соні','софія':'Софії','діана':'Діани','кристина':'Кристини','єва':'Єви','мілана':'Мілани','злата':'Злати','оксана':'Оксани','людмила':'Людмили','арина':'Арини','настя':'Насті','анастасія':'Анастасії','уляна':'Уляни','мирослава':'Мирослави','надія':'Надії','ольга':'Ольги','оля':'Олі','рита':'Рити','маргарита':'Маргарити','христина':'Христини','владислава':'Владислави','ліза':'Лізи','єлизавета':'Єлизавети'};
+  if(map[low])return map[low];
+  if(low.endsWith('ія'))return n.slice(0,-2)+'ії';
+  if(low.endsWith('я'))return n.slice(0,-1)+'і';
+  if(low.endsWith('а'))return n.slice(0,-1)+'и';
+  if(low.endsWith('ь'))return n.slice(0,-1)+'я';
+  if(low.endsWith('й'))return n.slice(0,-1)+'я';
+  if(low.endsWith('о'))return n.slice(0,-1)+'а';
+  return n;
+}
+function genderName(name){
+  const n=name.trim().toLowerCase();
+  const f=new Set(['анна','аня','катерина','катя','марія','маша','наталія','наташа','олена','лена','ірина','іра','тетяна','таня','юлія','юля','вікторія','віка','аліна','аліса','дарина','даша','валерія','лера','ксенія','ксюша','поліна','соня','софія','діана','кристина','єва','мілана','злата','оксана','людмила','арина','настя','анастасія','уляна','мирослава','надія','ольга','оля','рита','маргарита','христина','владислава','ліза','єлизавета']);
+  if(f.has(n))return 'f';
+  if(n.endsWith('ія')||n.endsWith('я')||n.endsWith('а'))return 'f';
+  return 'm';
+}
+function vb(name,m,f){return genderName(name)==='f'?f:m;}
+
+function renderResult(){
+  document.getElementById('hero-name-res').textContent=declineName(st.name);
+  document.getElementById('res-meta').textContent=(st.age||'')+(st.age?' років · ':' · ')+fmtDate(st.date);
+
+  // Badges
+  const badgeDefs=[
+    {key:'algo',pct:st._algoP,label:'Алгоритмічне мислення',icon:'🧩'},
+    {key:'spat',pct:st._spatP,label:'Просторове мислення',icon:'🗺️'},
+    {key:'vis', pct:st._visP, label:'Візуальне мислення',icon:'🎨'},
+    {key:'str', pct:st._strP, label:'Структурне мислення',icon:'🏗️'},
+    {key:'cre', pct:st._creP===-1?0:st._creP,label:'Гнучкість ідей',icon:'💡'},
+    {key:'seq', pct:st._seqP, label:'Послідовність та зв\'язність',icon:'📖'},
+  ];
+  const badges=badgeDefs.filter(b=>b.pct>=60).sort((a,b)=>b.pct-a.pct).slice(0,3);
+  document.getElementById('res-badges').innerHTML=badges.length===0
+    ?'<span style="color:rgba(255,255,255,.45);font-size:13px">Результати збалансовані по всіх напрямах</span>'
+    :badges.map(b=>`<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);color:#fff;border:1.5px solid rgba(255,255,255,.28);border-radius:24px;padding:6px 16px;font-size:13px;font-weight:600">${b.icon} ${b.label}</span>`).join('');
+
+  // Skill bars
+  const bars=[
+    {label:'🧩 Алгоритмічне мислення',pct:st._algoP,cls:'b-algo'},
+    {label:'🗺️ Просторове мислення',pct:st._spatP,cls:'b-spat'},
+    {label:'🎨 Візуальне мислення',pct:st._visP,cls:'b-vis'},
+    {label:'🏗️ Структурне мислення',pct:st._strP,cls:'b-str'},
+    {label:'💡 Гнучкість ідей',pct:st._creP,cls:'b-crea'},
+    {label:'📖 Послідовність та зв\'язність',pct:st._seqP,cls:'b-seq'},
+  ];
+  document.getElementById('skill-bars').innerHTML=bars.map(b=>{
+    const isNA=b.pct===-1;const displayPct=isNA?'—':b.pct+'%';const barWidth=isNA?0:b.pct;
+    return `<div class="bar-row"><div class="bar-lbl"><span>${b.label}</span><span style="color:${isNA?'var(--muted)':'inherit'}">${displayPct}</span></div><div class="bar-tr">${isNA?`<div style="height:100%;border-radius:99px;background:repeating-linear-gradient(45deg,var(--surf2),var(--surf2) 4px,var(--brd) 4px,var(--brd) 8px)"></div>`:`<div class="bar-fi ${b.cls}" style="width:0%" data-pct="${barWidth}"></div>`}</div></div>`;
+  }).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('.bar-fi[data-pct]').forEach(e=>setTimeout(()=>e.style.width=e.dataset.pct+'%',180)));
+
+  // Big 3 profiles
+  document.getElementById('big-scores').innerHTML=`
+    <div class="score-card it"><div class="score-num">${st.itR}%</div><div class="score-lbl">💻 IT-готовність</div></div>
+    <div class="score-card vc"><div class="score-num">${st.vcR}%</div><div class="score-lbl">🎨 Візуально-творчий профіль</div></div>
+    <div class="score-card pt"><div class="score-num">${st.ptR}%</div><div class="score-lbl">🧩 Проєктне мислення</div></div>
+  `;
+
+  // Summary
+  const sums={
+    gamedev:`Результати діагностики показали високий рівень алгоритмічного та структурного мислення — саме ці навички є основою розробки ігор. GameDev Junior відкриє можливість створювати власні ігрові механіки та рівні в Unity.`,
+    roblox:`Дитина впевнено виконувала алгоритмічні та просторові завдання. Roblox Studio — природний наступний крок: тут логіка програмування поєднується з творчим підходом до дизайну ігор.`,
+    minecraft:`Просторове та алгоритмічне мислення розвинені на хорошому рівні. Minecraft — зручний старт для розвитку цих навичок у творчому середовищі.`,
+    drawing:`Візуальне мислення та гнучкість ідей дуже добре розвинені. Цифрове малювання — природне середовище для розкриття творчого потенціалу та створення власних персонажів і ілюстрацій.`,
+    design:`Поєднання візуального мислення та структурного підходу — відмінна база для Design Junior. Курс відкриє можливість будувати власний стиль і digital-проєкти.`,
+    frontend:`Є хороший баланс між структурним та алгоритмічним мисленням. Frontend Junior відкриє шлях до створення власних вебсторінок — від дизайну до інтерактивних елементів.`,
+    ai:`Гнучкість ідей у поєднанні з розумінням структури — хороша база для AI Creator. Курс відкриє можливість створювати digital-проєкти за допомогою сучасних AI-інструментів.`,
+  };
+  document.getElementById('res-summary').textContent=sums[st.mainC]||sums.roblox;
+
+  // Main course
+  const mc=COURSES[st.mainC];
+  const why=buildWhy(st.mainC);
+  document.getElementById('main-course-block').innerHTML=`<div class="course-card"><div class="course-badge">Рекомендуємо розглянути</div><h2 style="margin:10px 0 7px">${mc.title}</h2><p style="font-size:14px;color:var(--muted);margin-bottom:12px;line-height:1.65">${mc.description}</p><h3 style="font-size:14px;margin-bottom:8px">Чому цей напрям може підійти</h3><div class="why-list">${why.map(w=>'<div class="why-item">'+w+'</div>').join('')}</div></div>`;
+
+  // Alt course
+  if(st.altC){const ac=COURSES[st.altC];document.getElementById('alt-course-block').innerHTML=`<div class="course-card alt"><div class="course-badge" style="background:var(--surf);color:var(--navy);border:1.5px solid var(--brd)">Також можна розглянути</div><h2 style="margin:10px 0 7px;font-size:18px">${ac.title}</h2><p style="font-size:13px;color:var(--muted);line-height:1.65">${ac.description}</p></div>`;}
+
+  // Dev block
+  const devItems=buildDevRecs();
+  if(devItems.length>0){document.getElementById('dev-block-wrap').innerHTML='<div style="background:linear-gradient(135deg,#d8f0b8 0%,#edfadb 100%);border-radius:var(--rl);padding:22px;margin-top:14px;border:1.5px solid #a3d96b"><h3 style="margin-bottom:16px;color:#2a4a0a;font-size:16px;display:flex;align-items:center;gap:7px"><span>💡</span><span>Додаткові ідеї для розвитку</span></h3><div style="display:flex;flex-direction:column;gap:12px">'+devItems.map(d=>'<div style="display:flex;gap:10px;font-size:14px;line-height:1.65;color:#2d4a0f"><span style="flex-shrink:0;color:#6BAA28;font-weight:700;margin-top:1px">·</span><span>'+d+'</span></div>').join('')+'</div></div>';}
+
+  // Fallback note
+  if(st._fallbackNote){const fn=document.getElementById('note-fallback');fn.style.display='block';fn.textContent='📌 '+st._fallbackNote;}
+
+  // Print meta
+  const pm=document.getElementById('print-meta-top');if(pm)pm.textContent=st.name+', '+st.age+' р. · '+fmtDate(st.date);
+}
+
+function buildWhy(course){
+  const items=[];
+  const aP=st._algoP,spP=st._spatP,viP=st._visP,stP=st._strP,crP=st._creP===-1?50:st._creP;
+  if(course==='gamedev'){
+    if(aP>=65)items.push('Алгоритмічне мислення на високому рівні — основа для скриптування ігрових механік');
+    if(stP>=60)items.push('Структурне мислення допоможе будувати логіку рівнів та системи гри');
+    if(spP>=55)items.push('Просторове мислення знадобиться для дизайну 3D-просторів');
+    if(st.fq1==='gamedev')items.push('Є явний інтерес до створення повноцінних ігор');
+    if(items.length<2)items.push('Unity та visual scripting — чудовий старт для майбутнього геймдевелопера');
+  } else if(course==='roblox'){
+    if(aP>=55)items.push('Алгоритмічне мислення — хороша база для перших скриптів у Roblox Studio');
+    if(spP>=50)items.push('Просторове мислення допоможе у 3D-дизайні ігрових світів');
+    if(st.fq1==='roblox')items.push('Є явний інтерес до Roblox — добра основа для переходу від гри до створення');
+    else items.push('Roblox Studio — природний перехід від гравця до розробника');
+    if(items.length<2)items.push('Мова Lua дозволяє поступово заглиблюватися у реальне програмування');
+  } else if(course==='minecraft'){
+    if(spP>=45)items.push('Просторове мислення — ключова навичка для будівництва в Minecraft');
+    if(aP>=40)items.push('Основи алгоритмічного мислення вже є — Minecraft допоможе їх розвинути');
+    if(st.fq1==='minecraft')items.push('Є явний інтерес до Minecraft — чудовий старт');
+    if(items.length<2)items.push('Minecraft Education поєднує творчість, логіку та перші кроки у програмуванні');
+  } else if(course==='drawing'){
+    if(viP>=50)items.push('Візуальне мислення розвинене добре — основа для цифрового малювання');
+    if(crP>=50)items.push('Гнучкість ідей допомагає у створенні оригінальних персонажів та ілюстрацій');
+    if(st.fq1==='drawing')items.push('Є явний інтерес до малювання та ілюстрацій');
+    if(items.length<2)items.push('Цифрове малювання — середовище, де творчість і технологія об\'єднуються');
+  } else if(course==='design'){
+    if(viP>=50)items.push('Візуальне мислення — ключова навичка для дизайну');
+    if(stP>=50)items.push('Структурне мислення допоможе будувати логічні та зрозумілі макети');
+    if(st.fq1==='design')items.push('Є явний інтерес до дизайну та оформлення');
+    if(items.length<2)items.push('Design Junior навчить будувати власний стиль та digital-проєкти');
+  } else if(course==='frontend'){
+    if(aP>=50)items.push('Алгоритмічне мислення — хороша основа для написання першого коду');
+    if(stP>=50)items.push('Структурне мислення допоможе будувати зручні й логічні сторінки');
+    if(st.fq1==='frontend')items.push('Є явний інтерес до створення сайтів');
+    if(items.length<2)items.push('Frontend Junior — шлях від першої HTML-сторінки до повноцінного сайту');
+  } else if(course==='ai'){
+    if(crP>=50)items.push('Гнучкість ідей — ключова навичка для роботи з AI-інструментами');
+    if(stP>=50)items.push('Структурне мислення допомагає будувати точні та ефективні запити до AI');
+    if(st.fq1==='ai'||st.fq2.includes('ai'))items.push('Є інтерес до AI-сервісів і digital-творчості');
+    if(items.length<2)items.push('AI Creator відкриє можливість створювати зображення, відео та творчі проєкти з AI');
+  }
+  return items.slice(0,3);
+}
+
+function buildDevRecs(){
+  const nm=st.name?st.name.charAt(0).toUpperCase()+st.name.slice(1):'';
+  const aP=st._algoP,spP=st._spatP,viP=st._visP,stP=st._strP,crP=st._creP===-1?null:st._creP,seP=st._seqP;
+  const STRENGTH={
+    algo:[`${nm} добре помічає закономірності й послідовність дій. Логічні ігри, головоломки та завдання на планування кількох кроків наперед стануть корисним доповненням.`,
+          `Алгоритмічне мислення розвинене добре — ${nm} впевнено слідує логіці та послідовності. Корисно додати логічні ігри та прості задачі з програмування.`],
+    spat:[`${nm} впевнено орієнтується у формах та просторі. Конструктори, ізометричні пазли та завдання з 3D-моделювання стануть чудовим доповненням.`,
+          `Просторове мислення — одна з помітних сильних сторін. Конструктори та схематичні моделі допоможуть розвивати цю навичку далі.`],
+    vis:[`${nm} добре сприймає кольори, композицію і деталі стилю. Варто частіше пропонувати малювання, ілюстрації та аналіз дизайнерських рішень.`,
+         `Візуальне мислення — виражена сильна сторона. Власні малюнки, колажі та дизайн-проєкти стануть відмінним середовищем для зростання.`],
+    str:[`${nm} добре структурує інформацію та бачить зв'язки між частинами. Проєктні завдання, блок-схеми та планування власних ідей допоможуть розвивати цю навичку.`,
+         `Структурне мислення — помітна перевага. Корисно пропонувати завдання, де треба розбивати велику ціль на кроки та будувати логічні зв'язки.`],
+    cre:[`${nm} легко знаходить нестандартні рішення. Власні ігрові сценарії, вигадані персонажі та творчі проєкти допоможуть розвивати цю навичку.`,
+         `Гнучкість ідей — помітна перевага. ${nm} не зупиняється на першому варіанті. Творчі завдання та пошук альтернативних рішень підтримають цю якість.`],
+    seq:[`${nm} добре вибудовує події в логічному порядку. Комікси, планування проєктів і переказ складних сюжетів — корисне доповнення.`,
+         `Вміння вибудовувати чітку послідовність — сильна риса. Корисно пропонувати планування по кроках та складання власних сценаріїв.`],
+  };
+  const GAP={
+    algo:`Щоб ${nm} впевненіше ${vb(nm,'працював','працювала')} з логікою, підійдуть покрокові задачі та ігри, де треба планувати дії наперед.`,
+    spat:`Щоб ${nm} краще ${vb(nm,'орієнтувався','орієнтувалась')} у просторі та формах, варто частіше пропонувати конструктори та ізометричні завдання.`,
+    vis:`Щоб ${nm} краще ${vb(nm,'помічав','помічала')} кольори й деталі, можна аналізувати дизайни улюблених ігор та додатків і обговорювати, що робить їх зручними.`,
+    str:`Щоб ${nm} легше ${vb(nm,'структурував','структурувала')} інформацію, корисно практикувати планування невеликих проєктів та складання блок-схем.`,
+    cre:`Щоб ${nm} легше ${vb(nm,'знаходив','знаходила')} різні рішення, варто вигадувати власні правила ігор та шукати кілька варіантів для кожної задачі.`,
+    seq:`Щоб ${nm} впевненіше ${vb(nm,'вибудовував','вибудовувала')} послідовності, можна разом планувати проєкти по кроках та складати сценарії від початку до кінця.`,
+  };
+  const cands=[];
+  if(aP>=65)cands.push({s:aP,t:'algo'});
+  if(spP>=65)cands.push({s:spP,t:'spat'});
+  if(viP>=65)cands.push({s:viP,t:'vis'});
+  if(stP>=65)cands.push({s:stP,t:'str'});
+  if(crP!==null&&crP>=55)cands.push({s:crP,t:'cre'});
+  if(seP>=65)cands.push({s:seP,t:'seq'});
+  if(aP<45)cands.push({s:100-aP,t:'algo',gap:true});
+  if(spP<45)cands.push({s:100-spP,t:'spat',gap:true});
+  if(viP<45)cands.push({s:100-viP,t:'vis',gap:true});
+  if(stP<45)cands.push({s:100-stP,t:'str',gap:true});
+  if(crP!==null&&crP<35)cands.push({s:100-crP,t:'cre',gap:true});
+  if(seP<35)cands.push({s:100-seP,t:'seq',gap:true});
+  cands.sort((a,b)=>b.s-a.s);
+  const used=new Set(),res=[];
+  for(const c of cands){
+    if(!used.has(c.t)){used.add(c.t);if(c.gap){res.push(GAP[c.t]);}else{const phrases=STRENGTH[c.t];res.push(phrases[res.length%phrases.length]);}}
+    if(res.length===3)break;
+  }
+  return res;
+}
+
+function savePDF(){
+  const origTitle=document.title;document.title='GoITeens — Діагностика 11–13 · '+st.name;
+  window.print();setTimeout(()=>{document.title=origTitle;},2000);
+}
+
+/* ═══════════ DOMContentLoaded ═══════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('inp-date').value=new Date().toISOString().split('T')[0];
+  st.date=document.getElementById('inp-date').value;
+  buildDroneGrid();buildDroneOpts();
+  buildPosters();
+  buildRotation();
+  buildPageStruct();
+  buildChasm();
+  buildStoryCards();
+  buildFixGrid();buildProgSeq7();
+  buildTower();buildTowerOpts();
+  buildOcean();
+  buildSiteOpts();
+  buildAIPrompts();
+  buildLoopOpts();
+  buildAppOpts();
+  buildPathOpts();
+  buildRuleStrip15();buildRuleOpts15();
+  buildFutureCity();
+  buildSiteFlow();
+  buildLevelOpts();
+});
+</script>
+</body>
+</html>
